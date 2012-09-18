@@ -10,7 +10,9 @@
 	$parser = new ShopParser($db, $reader);
 	
 	$parser->GetContent($_GET['url']);
+	$parser->Load();
 	$parser->ExtractData();
 	
+	echo 'Parsing page: ' . $_GET['url'];
 	echo '<pre>' . print_r($parser->GetOutput(), true) . '</pre>';
 ?>

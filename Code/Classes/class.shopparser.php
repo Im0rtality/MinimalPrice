@@ -1,4 +1,7 @@
 <?php
+	function debug($data) {
+		echo "<pre>" . print_r($data, true) . "</pre>";
+	}
 	class ShopParser{
 		protected $Hostname;	
 		
@@ -8,6 +11,7 @@
 		private $Buffer;
 		private $DOM;
 		private $Nodes;
+		private $XPath;
 		
 		
 		function ShopParser($DB, $R){
@@ -18,12 +22,13 @@
 		
 		function GetContent($PageUrl) {
 			$this->Buffer = $this->Reader->Get($PageUrl);
+			//echo "Downloaded " . strlen($this->Buffer) . " bytes from " . $PageUrl . "\n\r";
 			return $this->Buffer;
 		}
 		
 		function Load() {
 			if (!empty($this->Buffer)) {
-				$this->DOM->loadHTML($Buffer);
+				@$this->DOM->loadHTML($this->Buffer);
 				return true;
 			} else {
 				$this->LastError = "Error: Buffer is empty";
@@ -33,10 +38,35 @@
 		
 		function ExtractData() {
 			$this->Nodes = $this->DOM->getElementsByTagName('table');
+			$this->XPath = new DomXPath($this->DOM);
 		}
 		
 		function GetOutput() {
-			return $this->Nodes;
+			$contents = array();
+			$classname = "productListing";
+			$tbody = $this->XPath->query("//table[contains(@class,\"$classname\")][1]//tr");
+
+			foreach ($tbody as $node) {
+				$item = array();
+				$td = $this->XPath->Query('td', $node);
+				if ($td->length == 7) {
+					$attr = $this->XPath->Query('a', $td->item(2))->item(0);
+					if ($attr != null) {
+					
+						foreach ($attr->attributes as $attrName => $attrNode) {
+							if ($attrNode->name == "href") {
+								$item["href"] = $attrNode->value; 
+							}
+						}
+						
+						$item['model'] = $td->item(0)->textContent;
+						$item["href"] = $attrNode->value; 
+						$item['price'] = $td->item(5)->textContent;
+						$contents[] = $item;
+					}
+				}
+			}
+			return $contents;
 		}
 	}
 ?>
