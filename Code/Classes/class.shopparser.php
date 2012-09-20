@@ -22,7 +22,6 @@
 		
 		function GetContent($PageUrl) {
 			$this->Buffer = $this->Reader->Get($PageUrl);
-			//echo "Downloaded " . strlen($this->Buffer) . " bytes from " . $PageUrl . "\n\r";
 			return $this->Buffer;
 		}
 		
@@ -60,8 +59,9 @@
 						}
 						
 						$item['model'] = $td->item(0)->textContent;
-						$item["href"] = $attrNode->value; 
+						$item['href'] = $attrNode->value; 
 						$item['price'] = $td->item(5)->textContent;
+						
 						$contents[] = $item;
 					}
 				}
