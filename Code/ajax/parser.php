@@ -4,7 +4,6 @@
 	require("../Classes/class.mysql.php");
 	require("../Classes/class.remote-reader.php");
 	require("../Classes/class.template-manager.php");
-	//require("../Classes/class.shop-parser.php");
 	require("../Parsers/parser.skytechlt.php");
 	
 	$db = new MySql();
@@ -18,5 +17,5 @@
 	$parser->Load();
 	$parser->Parse();
 	
-	//debug($parser->GetData());
+	debug($parser->GetData());
 ?>
