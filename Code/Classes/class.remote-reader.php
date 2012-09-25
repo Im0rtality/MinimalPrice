@@ -1,5 +1,5 @@
 <?php
-    include("interface.readerengine.php");
+    include("interface.reader-engine.php");
 	
 	class RemoteReader implements ReaderEngine{
 		private $UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.3) Gecko/20060426 Firefox/1.5.0.3";

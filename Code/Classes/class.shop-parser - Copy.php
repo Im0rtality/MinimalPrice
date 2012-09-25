@@ -1,8 +1,7 @@
 <?php
-	function debug($data) {
-		echo "<pre>" . print_r($data, true) . "</pre>";
-	}
-	class ShopParser{
+	require_once("../Shared/utils.php");
+
+	abstract class ShopParser{
 		protected $Hostname;	
 		
 		public  $LastError;				
@@ -14,7 +13,7 @@
 		private $XPath;
 		
 		
-		function ShopParser($DB, $R){
+		function __construct($DB, $R){
 			$this->DBLink = $DB;
 			$this->Reader = $R;
 			$this->DOM = new DOMDocument();

@@ -1,11 +1,13 @@
 <?php
-	include("interface.databaseengine.php");
+	include("interface.database-engine.php");
 	
 	class MySQL implements DatabaseEngine{
+	/*
 		protected $Hostname = MYSQL_HOST;	
 		protected $Username = MYSQL_USER;	
 		protected $Password = MYSQL_PASS;	
 		protected $Database = MYSQL_NAME;	
+	*/
 		protected $Prefix   = MYSQL_PREFIX;	
 
 		public $LastError;				
@@ -23,14 +25,14 @@
 				mysql_close($this->DBLink);
 			}
 				
-			$this->DBLink = mysql_connect($this->Hostname, $this->Username, $this->Password);
+			$this->DBLink = mysql_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASS);
 			
 			if (!$this->DBLink){
 				$this->LastError = 'Could not connect to server: ' . mysql_error($this->DBLink);
 				return false;
 			}
 			
-			if(!mysql_select_db($this->Database, $this->DBLink)){
+			if(!mysql_select_db(MYSQL_NAME, $this->DBLink)){
 				$this->LastError = 'Cannot select database: ' . mysql_error($this->DBLink);
 				return false;
 			}
