@@ -1,6 +1,13 @@
 <?php
     function debug($data) {
+		if (empty($data)) {
+			$data = "/EMPTY/";
+		}
 		echo "<pre>" . print_r($data, true) . "</pre>";
+	}
+	
+	function isTemplateMarker($string) {
+		return ($string == ("{" . trim($string, "{}") . "}"));
 	}
 	
 	function innerHTML( $contentdiv, $self = false ) {
