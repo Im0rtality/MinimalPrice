@@ -48,19 +48,20 @@
 			if ($docNode->nodeName == $tmplNode->nodeName) {
 				if (isTemplateMarker($tmplNode->nodeValue)) {
 					$item[trim($tmplNode->nodeValue, "{}")] = $docNode->nodeValue;							
-				} else {
-					$tmplAttrs = $tmplNode->attributes;
-					if (!empty($tmplAttrs)) {
-						$docAttrs = $docNode->attributes;
-						foreach ($tmplAttrs as $tmplAttr) {						
-							if (isTemplateMarker($tmplAttr->nodeValue)) {
-								$item[trim($tmplAttr->nodeValue, "{}")] = $docNode->getAttribute($tmplAttr->nodeName);
-							} else {
-								debug('"' . $tmplAttr->nodeValue . '" is not valid template marker');
-							}
+				}
+				
+				$tmplAttrs = $tmplNode->attributes;
+				if (!empty($tmplAttrs)) {
+					$docAttrs = $docNode->attributes;
+					foreach ($tmplAttrs as $tmplAttr) {						
+						if (isTemplateMarker($tmplAttr->nodeValue)) {
+							$item[trim($tmplAttr->nodeValue, "{}")] = $docNode->getAttribute($tmplAttr->nodeName);
+						} else {
+							debug('"' . $tmplAttr->nodeValue . '" is not valid template marker');
 						}
 					}
 				}
+
 			}
 			return true;
 		}
@@ -167,6 +168,7 @@
 
 
 			$i = 0;
+			//$tr = $tbody->item(0);
 			foreach ($tbody as $tr) {
 				$i++;
 				if ($i < $skip) {
