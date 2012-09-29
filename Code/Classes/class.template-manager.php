@@ -8,7 +8,6 @@
 		}
 		
 		function Load($ID) {
-//			debug("TemplateManager->Load('$ID')");
 			// load $this->Template from DB
 			// for now lets hardcode data for skytech.lt
 			$classname = "productListing";
@@ -20,7 +19,6 @@
 		}
 		
 		function GetItem($Piece) {
-//			debug("TemplateManager->GetItem('$Piece')");
 			if (!empty($this->Template[$Piece])) {
 				return $this->Template[$Piece];
 			}			
