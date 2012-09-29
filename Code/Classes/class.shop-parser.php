@@ -120,10 +120,9 @@
 								}
 							} else {
 								if ($this->DebugMode) {
-									echo "<b>Parsing error: element doesnt match template</b><br/>";
-									echo "Debug info (save to <a href='www.pastebin.com'>pastebin</a> and send to one who makes templates):<br/><br/>";
+									echo "<b>Warning: element doesnt match template</b><br/>";
+									echo "Debug info (save to <a href='www.pastebin.com'>pastebin</a> and send to person who makes templates):<br/><br/>";
 								
-									echo "### DEBUG INFORMATION ###<br/>";
 									echo "website url:<br/>";
 									echo "{$this->PageUrl}<br/><br/>";
 
@@ -146,7 +145,7 @@
 										echo "<li>" . htmlentities(innerHTML($n, true)) . "</li>";
 									}
 									echo "</ul><br/>";
-									echo "### END OF DEBUG INFORMATION ###<br/>";
+									echo "<hr/>";
 								}
 							}
 						}
@@ -161,11 +160,12 @@
 		}
 		
 		protected function parseProducts() {
-			foreach($this->productList as $product) {
+			/*foreach($this->productList as $product) {
 				$this->getContent($this->ShopUrl . $product['href']);
 				$this->load();
 				
 			}
+			*/
 		}
 		
 		protected function getProductTechSpecByCategory($Product, $Category) {
@@ -178,19 +178,18 @@
 			}
 		}
 		
-		protected function parseCategory() {
+		protected function internalParseCategory() {
 			$this->productList = array();
 			
 			$DOM2 = new DOMDocument();
 
-			$protuctList = $this->XPath->query($this->Templates->GetItem("product-list"));
+			$list = $this->XPath->query($this->Templates->GetItem("product-list"));
 			$DOM2->loadXML($this->Templates->GetItem("product-list-item"));
 			$skip = $this->Templates->GetItem("product-list-skip");
 			$fieldCount = $this->Templates->GetItem("product-list-field-count");
 
-
 			$i = 0;
-			foreach ($protuctList as $product) {
+			foreach ($list as $product) {
 				$i++;
 				if ($i < $skip) {
 					continue;
@@ -203,7 +202,6 @@
 								
 				$this->internalParseWithTemplate($docNode, $tmplNode, $item, 0);
 													
-
 // 				Validate records: Valid ones will have defined number of fields. Skip bad ones.
 				$cnt = 0;
 				foreach ($item as $field) {
@@ -215,18 +213,26 @@
 					$this->productList[] = $item;
 				}
 			}
+			
+			if ($this->DebugMode) {
+				if ($list->length != count($this->productList)) {
+					echo "<b>Warning: Retrieved product list length doesnt match DOM elements number.</b><br/>";
+					echo "Should those items be skipped?<br/>";
+					echo "<hr/>";
+				}
+			}
 		}
 		
 		public function parseCategory($CatUrl) {
 			$this->CatUrl = $CatUrl;
 			$this->getContent($this->CatUrl);
 			$this->load();
-			$this->parseCategory();
+			$this->internalParseCategory();
 			$this->parseProducts();
 		}
 				
 		protected function getOutput() {			
-			return $this->contents;
+			return $this->productList;
 		}
 	}
 ?>

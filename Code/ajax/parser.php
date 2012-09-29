@@ -13,9 +13,10 @@
 
 	$parser = new SimpleShopParser($db, $reader);
 	
-	$parser->GetContent($_GET['url']);
+	/*$parser->GetContent($_GET['url']);
 	$parser->Load();
 	$parser->Parse();
-	
+	*/
+	$parser->parseCategory($_GET['url']);
 	debug($parser->GetData());
 ?>
