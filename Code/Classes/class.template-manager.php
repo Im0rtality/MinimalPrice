@@ -15,6 +15,7 @@
 			
 			$this->Template['product-list'] = "//table[contains(@class,\"productListing\")][1]//tr";
 			$this->Template['product-list-skip'] = 1;
+			$this->Template['product-list-field-count'] = 3;
 			$this->Template['product-list-item'] = "<template><td>{serial}</td><td></td><td><a href='{href}'></a> </td><td></td><td>{price}</td></template>";
 		}
 		
