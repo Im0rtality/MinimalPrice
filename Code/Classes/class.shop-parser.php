@@ -12,11 +12,14 @@
 
 		protected $contents;
 		
+		public  $DebugMode = true;
 		public  $LastError;				
 		private $Buffer;
 		private $DOM;
 		private $XPath;
 		private $PageUrl;
+		protected $ShopUrl;
+		private $CatUrl;
 				
 		function __construct($DB, $Reader){
 			$this->DB = $DB;
@@ -25,13 +28,13 @@
 			$this->DOM = new DOMDocument();
 		}
 		
-		function GetContent($PageUrl) {
+		function getContent($PageUrl) {
 			$this->PageUrl = $PageUrl;
 			$this->Buffer = $this->Reader->Get($PageUrl);
 			return $this->Buffer;
 		}
 		
-		function Load() {
+		function load() {
 			if (!empty($this->Buffer)) {
 				@$this->DOM->loadHTML($this->Buffer);
 				$this->DOM->preserveWhiteSpace = false;
@@ -61,7 +64,6 @@
 						}
 					}
 				}
-
 			}
 			return true;
 		}
@@ -117,33 +119,35 @@
 									}
 								}
 							} else {
-								echo "<b>Parsing error: element doesnt match template</b><br/>";
-								echo "Debug info (save to <a href='www.pastebin.com'>pastebin</a> and send to one who makes templates):<br/><br/>";
-							
-								echo "### DEBUG INFORMATION ###<br/>";
-								echo "website url:<br/>";
-								echo "{$this->PageUrl}<br/><br/>";
-
-								echo "internalParseWithTemplate arguments:<br/>";
-								echo "<ol><li>".htmlentities(innerHTML($docNode, true))."</li>";
-								echo 	 "<li>".htmlentities(innerHTML($tmplNode, true))."</li>";
-								echo 	 "<li>[...]</li>";
-								echo 	 "<li>{$depth}</li></ol><br/>";
+								if ($this->DebugMode) {
+									echo "<b>Parsing error: element doesnt match template</b><br/>";
+									echo "Debug info (save to <a href='www.pastebin.com'>pastebin</a> and send to one who makes templates):<br/><br/>";
 								
-								echo "Current element (" . htmlentities(innerHTML($docNode, true)) . ") doesnt match template. <br/><br/>";
+									echo "### DEBUG INFORMATION ###<br/>";
+									echo "website url:<br/>";
+									echo "{$this->PageUrl}<br/><br/>";
 
-								echo "doc child nodes(count={$docChildren->length}):<ul>";
-								foreach ($docChildren as $n) {
-									echo "<li>" . htmlentities(innerHTML($n, true)) . "</li>";
-								}
-								echo "</ul><br/>";
+									echo "internalParseWithTemplate arguments:<br/>";
+									echo "<ol><li>".htmlentities(innerHTML($docNode, true))."</li>";
+									echo 	 "<li>".htmlentities(innerHTML($tmplNode, true))."</li>";
+									echo 	 "<li>[...]</li>";
+									echo 	 "<li>{$depth}</li></ol><br/>";
+									
+									echo "Current element (" . htmlentities(innerHTML($docNode, true)) . ") doesnt match template. <br/><br/>";
 
-								echo "tmpl child nodes(count={$tmplChildren->length}):<ul>";
-								foreach ($tmplChildren as $n) {
-									echo "<li>" . htmlentities(innerHTML($n, true)) . "</li>";
+									echo "doc child nodes(count={$docChildren->length}):<ul>";
+									foreach ($docChildren as $n) {
+										echo "<li>" . htmlentities(innerHTML($n, true)) . "</li>";
+									}
+									echo "</ul><br/>";
+
+									echo "tmpl child nodes(count={$tmplChildren->length}):<ul>";
+									foreach ($tmplChildren as $n) {
+										echo "<li>" . htmlentities(innerHTML($n, true)) . "</li>";
+									}
+									echo "</ul><br/>";
+									echo "### END OF DEBUG INFORMATION ###<br/>";
 								}
-								echo "</ul><br/>";
-								echo "### END OF DEBUG INFORMATION ###<br/>";
 							}
 						}
 						$docNode = $docNode->nextSibling;
@@ -156,20 +160,37 @@
 			//if ($docNode == NULL) debug('$docNode == NULL');
 		}
 		
-		protected function ExtractData() {
-			$this->contents = array();
+		protected function parseProducts() {
+			foreach($this->productList as $product) {
+				$this->getContent($this->ShopUrl . $product['href']);
+				$this->load();
+				
+			}
+		}
+		
+		protected function getProductTechSpecByCategory($Product, $Category) {
+			switch ($Category) {
+				case "CPU":
+					break;
+				default:
+					die("Unknown category ('{$Category}') in getProductTechSpecByCategory");
+					break;
+			}
+		}
+		
+		protected function parseCategory() {
+			$this->productList = array();
 			
-			$tbody = $this->XPath->query($this->Templates->GetItem("product-list"));
 			$DOM2 = new DOMDocument();
+
+			$protuctList = $this->XPath->query($this->Templates->GetItem("product-list"));
 			$DOM2->loadXML($this->Templates->GetItem("product-list-item"));
-			$DOM2->formatOutput = true;
-			
 			$skip = $this->Templates->GetItem("product-list-skip");
+			$fieldCount = $this->Templates->GetItem("product-list-field-count");
 
 
 			$i = 0;
-			//$tr = $tbody->item(0);
-			foreach ($tbody as $tr) {
+			foreach ($protuctList as $product) {
 				$i++;
 				if ($i < $skip) {
 					continue;
@@ -177,140 +198,34 @@
 				$item = array();
 				$break = false;
 				
-				// <td>{serial}</td>
 				$tmplNode = $DOM2->getElementsByTagName('template')->item(0)->firstChild;
-				//debug("template");
-				//debug(htmlentities(innerHTML($DOM2->getElementsByTagName('template')->item(0), true)));
-				
-				$docNode = $tr->getElementsByTagName($tmplNode->nodeName)->item(0);
-				//debug("document");
-				//debug(htmlentities(innerHTML($docNode->parentNode, true)));
-				
-				
+				$docNode = $product->getElementsByTagName($tmplNode->nodeName)->item(0);
+								
 				$this->internalParseWithTemplate($docNode, $tmplNode, $item, 0);
 													
-				$this->contents[] = $item;
-				
-//				if ($i++ >= 3) {
-//					break;
-//				}
-			}
-		}
-		
-		protected function ExtractData1() {
-			$this->contents = array();
-			
-			$tbody = $this->XPath->query($this->Templates->GetItem("product-list"));
-			$DOM2 = new DOMDocument();
-			$DOM2->loadXML($this->Templates->GetItem("product-list-item"));
 
-
-			foreach ($tbody as $tr) {
-				$item = array();
-				$break = false;
-				
-				// <td>{serial}</td>
-				$tmplNode = $DOM2->getElementsByTagName('template')->item(0)->firstChild;
-				$docNode = $tr->getElementsByTagName($tmplNode->nodeName)->item(0);
-				
-				$i = 0;
-				do {
-					$i++;
-					debug("Loop: {$i} searching for: {$tmplNode->nodeName}");// docNode: {$docNode->nodeName}");
-					
-					while ($docNode->nodeName != $tmplNode->nodeName) {
-						$docNode = $docNode->nextSibling;
-						if ($docNode == NULL) {
-							$break = true;
-							break;
-						}
+// 				Validate records: Valid ones will have defined number of fields. Skip bad ones.
+				$cnt = 0;
+				foreach ($item as $field) {
+					if (!empty($field)) {
+						$cnt++;
 					}
-					if ($break) {
-						debug("BREAKING!");
-						break;
-					}
-
-					debug("Loop: {$i} docNode: {$docNode->nodeName} #" . $docNode->getLineNo() . " code: " . htmlentities(innerHTML($docNode, true)));
-					
-					if ($docNode->nodeName == $tmplNode->nodeName) {
-						/*
-						if (!empty($tmplNode->nodeValue)) {
-							$item[trim($tmplNode->nodeValue, "{}")] = $docNode->nodeValue;							
-						}
-						*/
-						$this->internalParseSingle($docNode, $tmplNode, $item);
-						$docNode = $docNode->nextSibling;
-					}
-					$tmplNode = $tmplNode->nextSibling;
-				} while (($tmplNode != NULL) && ($docNode != NULL));
-				if ($tmplNode == NULL) debug('$tmplNode == NULL');
-				if ($docNode == NULL) debug('$docNode == NULL');
-				debug("==================================================");
-									
-				$this->contents[] = $item;
-				break;
-			}
-		}
-		protected function ExtractData2() {
-			$this->contents = array();
-			//$classname = "productListing";
-			$tbody = $this->XPath->query($this->Templates->GetItem("product-list"));
-			$DOM2 = new DOMDocument();
-			$DOM2->loadHTML($this->Templates->GetItem("product-list-item"));
-
-
-			foreach ($tbody as $tr) {
-				$item = array();
-				$td = $this->XPath->Query('td', $tr);
-				
-				if ($td->length == 7) {
-					$attr = $this->XPath->Query('a', $td->item(2))->item(0);
-					if ($attr != null) {
-						$subject  = innerHTML($tr);
-						echo $subject;						
-						
-/*
-non condensed regex:
-
-<td (?:.*?)>\s*(?P<serial>.*?)\s*<\/td>\s*
-<td (?:.*?)>\s*(?:.*)\s*?<\/td>\s*
-<td (?:.*?)><a href='(?P<href>.*)'>(?:.*)<\/a>\s*?<\/td>\s*
-<td (?:.*?)>\s*?(?:.*)\s*?<\/td>\s*
-<td (?:.*?)>\s*(?:.*)\s*<\/td>\s*
-<td (?:.*?)>\s*(?P<price>.*?)\s*<\/td>\s*
-*/
-/*					
-<td>{serial}</td>
-<td></td>
-<td><a href='{href}'></a><td>
-<td></td>
-<td>{price}</td>
-						*/
-//						backing up pattern extracting HREF
-//						$pattern = "<td (?:.*?)>\s*(?P<serial>.*?)\s*<\/td>\s*<td (?:.*?)>\s*(?:.*)\s*?<\/td>\s*<td (?:.*?)><a href='(?<href>.*?)'>(?:.*?)<\/a>";
-						$pattern = "<td (?:.*?)>\s*(?P<serial>.*?)\s*<\/td>\s*<td (?:.*?)>\s*(?:.*)\s*?<\/td>\s*<td (?:.*?)><a href='(?<href>.*?)'>(?:.*?)<\/a> <\/td>\s*";
-						
-						preg_match('!' . $pattern . '!', $subject, $matches);
-						
-						debug($matches);
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-						$this->contents[] = $item;
-						break;
-					}
+				}
+				if ($cnt == $fieldCount) {
+					$this->productList[] = $item;
 				}
 			}
 		}
 		
-		protected function GetOutput() {			
+		public function parseCategory($CatUrl) {
+			$this->CatUrl = $CatUrl;
+			$this->getContent($this->CatUrl);
+			$this->load();
+			$this->parseCategory();
+			$this->parseProducts();
+		}
+				
+		protected function getOutput() {			
 			return $this->contents;
 		}
 	}
