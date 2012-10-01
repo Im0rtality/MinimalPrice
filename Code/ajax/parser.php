@@ -4,7 +4,6 @@
 	require("../Classes/class.mysql.php");
 	require("../Classes/class.remote-reader.php");
 	require("../Classes/class.template-manager.php");
-	//require("../Classes/class.shop-parser.php");
 	require("../Parsers/parser.skytechlt.php");
 	
 	$db = new MySql();
@@ -14,9 +13,10 @@
 
 	$parser = new SimpleShopParser($db, $reader);
 	
-	$parser->GetContent($_GET['url']);
+	/*$parser->GetContent($_GET['url']);
 	$parser->Load();
 	$parser->Parse();
-	
-	//debug($parser->GetData());
+	*/
+	$parser->parseCategory($_GET['url']);
+	debug($parser->GetData());
 ?>

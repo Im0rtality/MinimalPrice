@@ -31,9 +31,7 @@
 		}
 		
 		function GetData() {	
-			$c = $this->GetOutput();
-			debug($c);
-			return $c;
+			return $this->GetOutput();
 		}
 	}
 ?>

@@ -3,12 +3,12 @@
 	require_once("class.module.php");
 	require_once("class.template-manager.php");
 
-	class ShopParser extends Module{
+	class WebsiteParseTemplate {
 		protected $Hostname;	
 		
 		protected $Reader;
 		protected $DB;
-		protected $Templates;
+		protected $Template;
 
 		protected $contents;
 		
@@ -17,28 +17,24 @@
 		private $Buffer;
 		private $DOM;
 		private $XPath;
-		private $PageUrl;
-		protected $ShopUrl;
-		private $CatUrl;
+		private $Url;
 				
 		function __construct($DB, $Reader){
 			$this->DB = $DB;
 			$this->Reader = $Reader;	
-			$this->Templates = new TemplateManager($this->DB);
 			$this->DOM = new DOMDocument();
 		}
 		
-		function getContent($PageUrl) {
+		protected function getContent($PageUrl) {
 			$this->PageUrl = $PageUrl;
 			$this->Buffer = $this->Reader->Get($PageUrl);
 			return $this->Buffer;
 		}
 		
-		function load() {
+		protected function load() {
 			if (!empty($this->Buffer)) {
 				@$this->DOM->loadHTML($this->Buffer);
 				$this->DOM->preserveWhiteSpace = false;
-				$this->DOM->formatOutput = true;
 				$this->XPath = new DomXPath($this->DOM);
 				return true;
 			} else {
@@ -79,7 +75,7 @@
 				} else {
 //					echo "<b>Depth: {$depth} Loop: {$i}</b><br/> searching for: " . htmlentities(innerHTML($tmplNode, true)) . '<br/>';
 					
-					while ($docNode->nodeName != $tmplNode->nodeName) {
+					while ((!empty($docNode)) && ($docNode->nodeName != $tmplNode->nodeName)) {
 						$docNode = $docNode->nextSibling;
 						if ($docNode == NULL) {
 							$break = true;
@@ -93,7 +89,7 @@
 
 //					echo " docNode: " . htmlentities(innerHTML($docNode, true)) .'<br/>';
 					
-					if ($docNode->nodeName == $tmplNode->nodeName) {
+					if ((!empty($docNode)) && ($docNode->nodeName == $tmplNode->nodeName)) {
 						if ($this->internalParseSingle($docNode, $tmplNode, $item)) {
 							if (is_array($item)) {
 								$contents = array_merge($contents, $item);
@@ -120,9 +116,10 @@
 								}
 							} else {
 								if ($this->DebugMode) {
-									echo "<b>Warning: element doesnt match template</b><br/>";
-									echo "Debug info (save to <a href='www.pastebin.com'>pastebin</a> and send to person who makes templates):<br/><br/>";
+									echo "<b>Parsing error: element doesnt match template</b><br/>";
+									echo "Debug info (save to <a href='www.pastebin.com'>pastebin</a> and send to one who makes templates):<br/><br/>";
 								
+									echo "### DEBUG INFORMATION ###<br/>";
 									echo "website url:<br/>";
 									echo "{$this->PageUrl}<br/><br/>";
 
@@ -145,7 +142,7 @@
 										echo "<li>" . htmlentities(innerHTML($n, true)) . "</li>";
 									}
 									echo "</ul><br/>";
-									echo "<hr/>";
+									echo "### END OF DEBUG INFORMATION ###<br/>";
 								}
 							}
 						}
@@ -159,37 +156,22 @@
 			//if ($docNode == NULL) debug('$docNode == NULL');
 		}
 		
-		protected function parseProducts() {
-			/*foreach($this->productList as $product) {
-				$this->getContent($this->ShopUrl . $product['href']);
-				$this->load();
-				
-			}
-			*/
-		}
-		
-		protected function getProductTechSpecByCategory($Product, $Category) {
-			switch ($Category) {
-				case "CPU":
-					break;
-				default:
-					die("Unknown category ('{$Category}') in getProductTechSpecByCategory");
-					break;
-			}
-		}
-		
-		protected function internalParseCategory() {
-			$this->productList = array();
-			
+		private function internalParsePage($Tmpl){
+			//debug($Tmpl);
 			$DOM2 = new DOMDocument();
 
-			$list = $this->XPath->query($this->Templates->GetItem("product-list"));
-			$DOM2->loadXML($this->Templates->GetItem("product-list-item"));
-			$skip = $this->Templates->GetItem("product-list-skip");
-			$fieldCount = $this->Templates->GetItem("product-list-field-count");
+			$List = $this->XPath->query($Tmpl->XPath);
+//			if (!empty($field)) {
+				@$DOM2->loadXML($Tmpl->Tmpl);
+//			}
+			$skip = $Tmpl->Skip;
+			$fieldCount = $Tmpl->FieldCount;
+
 
 			$i = 0;
-			foreach ($list as $product) {
+			foreach ($List as $product) {
+				//debug(htmlentities(innerHTML($product)));
+				//echo "<hr/>";
 				$i++;
 				if ($i < $skip) {
 					continue;
@@ -197,11 +179,14 @@
 				$item = array();
 				$break = false;
 				
-				$tmplNode = $DOM2->getElementsByTagName('template')->item(0)->firstChild;
-				$docNode = $product->getElementsByTagName($tmplNode->nodeName)->item(0);
-								
-				$this->internalParseWithTemplate($docNode, $tmplNode, $item, 0);
-													
+				if (!empty($Tmpl->Tmpl)) {
+					$tmplNode = $DOM2->getElementsByTagName('template')->item(0)->firstChild;
+					$docNode = $product->getElementsByTagName($tmplNode->nodeName)->item(0);
+									
+					$this->internalParseWithTemplate($docNode, $tmplNode, $item, 0);
+				} else {
+					$item['value'] = innerHTML($product);
+				}
 // 				Validate records: Valid ones will have defined number of fields. Skip bad ones.
 				$cnt = 0;
 				foreach ($item as $field) {
@@ -210,29 +195,21 @@
 					}
 				}
 				if ($cnt == $fieldCount) {
-					$this->productList[] = $item;
-				}
-			}
-			
-			if ($this->DebugMode) {
-				if ($list->length != count($this->productList)) {
-					echo "<b>Warning: Retrieved product list length doesnt match DOM elements number.</b><br/>";
-					echo "Should those items be skipped?<br/>";
-					echo "<hr/>";
+					$this->contents[] = $item;
 				}
 			}
 		}
 		
-		public function parseCategory($CatUrl) {
-			$this->CatUrl = $CatUrl;
-			$this->getContent($this->CatUrl);
+		public function parsePage($Url, $Tmpl){
+			$this->contents = array();
+			
+			$this->Url = $Url;
+			$this->getContent($this->Url);
 			$this->load();
-			$this->internalParseCategory();
-			$this->parseProducts();
-		}
-				
-		protected function getOutput() {			
-			return $this->productList;
+			
+			$this->internalParsePage($Tmpl);
+			
+			return $this->contents;
 		}
 	}
 ?>
