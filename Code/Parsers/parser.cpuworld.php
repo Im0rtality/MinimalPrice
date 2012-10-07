@@ -1,6 +1,6 @@
 <?php
     require_once("../Shared/utils.php");
-    require_once("../Classes/class.wpt.php");
+    require_once("../Classes/wpt.php");
     require_once("../Classes/wpt-template.php");
     require_once("../Classes/cpu-spec.php");
 	

@@ -1,6 +1,6 @@
 <?php
     require_once("../Shared/utils.php");
-    require("../Classes/class.shop-parser.php");
+    require("../Classes/shop-parser.php");
 		
 	class SimpleShopParser extends ShopParser{	
 
