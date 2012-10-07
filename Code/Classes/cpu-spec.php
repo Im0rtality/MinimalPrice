@@ -1,5 +1,5 @@
 <?php
-	require_once("tech-spec.php");
+	require_once("Abstracts/tech-spec.php");
 	
 	class CpuSpec extends TechSpec{	
 		private static $IGNORED_FIELDS = array();//"Features", "CPUID", "Price_at_introduction", "Type");
@@ -11,6 +11,7 @@
 			// some kind of bullshit which does not want to be removed in conventional way
 			$key = str_replace(chr(194).chr(160).chr(63).chr(194).chr(160), '', $key);
 			$key = trim($key);
+			
 			return $key;
 		}		
 				
