@@ -2,12 +2,6 @@
 	include("Interfaces/database-engine.php");
 	
 	class MySQL implements DatabaseEngine{
-	/*
-		protected $Hostname = MYSQL_HOST;	
-		protected $Username = MYSQL_USER;	
-		protected $Password = MYSQL_PASS;	
-		protected $Database = MYSQL_NAME;	
-	*/
 		protected $Prefix   = MYSQL_PREFIX;	
 
 		public $LastError;				
