@@ -3,5 +3,5 @@
 	define("MYSQL_USER", "minimalprice");
 	define("MYSQL_PASS", "password");
 	define("MYSQL_NAME", "minimalprice");
-	define("MYSQL_PREFIX", "mp_");
+	define("MYSQL_PREFIX", "");
 ?>
