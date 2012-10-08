@@ -15,9 +15,6 @@
             <div class="row">
                 <div class="span3 bs-docs-sidebar">
                     <ul class="nav bs-docs-sidenav nav-stacked">
-                        <li>
-                            <a href="?page=home">Home</a>
-                        </li>
                         <?php foreach($template['nav'] as $nav): ?>
                         <li>
                             <a href="?page=<?php echo $nav['link']; ?>"><?php echo $nav['name']; ?></a>
