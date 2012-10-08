@@ -1,13 +1,34 @@
 <?php
 	//	required for page modules
 	require_once(dirname(__FILE__) . "/page-module.php");
+	//	required for PageHome class
+	require_once(dirname(__FILE__) . "/../Classes/formatter.php");
+	require_once(dirname(__FILE__) . "/interface.page-generator.php");
+	
+	class PageHome extends PageModule implements PageGenerator{
+		function __construct(){
+			$this->options['link'] = 'home';
+			$this->options['name'] = 'Home';
+			parent::__construct();
+		}
+
+		public function generate() {
+			$code = "<h1>{$this->options['name']}</h1>";
+			$code .= '<table class="table table-condensed table-hover table-stripped"><tr><th>Page/Module</th><th>Link/ID</th><th>PHP File</th><th>Class name</th></tr>';
+			foreach (AdminPageGenerator::getInstance()->getModules() as $module) {
+				$code .= "<tr><td>{$module->options['name']}</td><td>{$module->options['link']}</td><td>{$module->options['file']}</td><td>{$module->options['class']}</td></tr>";
+			}
+			$code .= '</table>';
+			return $code;
+		}
+	}
 
 	class AdminPageGenerator{
 		private $args = [];
 		private $page = 'home';
 		private $output;
 		private $DB;
-		private $modules = [];
+		protected $modules = [];
 
 		// Singleton pattern. Keep code tight for easy copy pasting to other places
     	protected static $instance = null;
@@ -37,6 +58,9 @@
 			}
 		}
 
+		public function getModules() {
+			return $this->modules;
+		}
 		/**
 		 * Includes all files from predefined directory
 		 * 
@@ -44,6 +68,7 @@
 		 **/
 		function includePages() {
 			$this->navbar = [];
+			new PageHome();
 			foreach (glob(dirname(__FILE__) . "/Pages/*.php") as $filename) {
 			    include $filename;
 			}
