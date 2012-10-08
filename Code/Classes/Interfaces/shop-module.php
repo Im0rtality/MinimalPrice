@@ -1,5 +1,5 @@
 <?php
-	include ("interface.module.php");
+	require ("interface.module.php");
 	
 	interface ShopModule extends Module{
 			function SetHomepage($Url);

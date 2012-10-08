@@ -14,7 +14,5 @@
 	} else {
 		die("Cannot parse: sn paremeter is empty or not set");
 	}
-
-	
 	
 ?>

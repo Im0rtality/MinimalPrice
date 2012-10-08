@@ -1,5 +1,5 @@
 <?php
-//	required for page modules
+	//	required for page modules
 	require_once(dirname(__FILE__) . "/page-module.php");
 
 	class AdminPageGenerator{
