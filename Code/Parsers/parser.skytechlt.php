@@ -1,11 +1,11 @@
 <?php
-    require_once("../Shared/utils.php");
-    require("../Classes/shop-parser.php");
+     require_once(dirname(__FILE__) . "/../Shared/utils.php");
+     require_once(dirname(__FILE__) . "/../Classes/shop-parser.php");
 		
 	class SimpleShopParser extends ShopParser{	
 
-		function __construct($DB, $Reader){
-			parent::__construct($DB, $Reader);
+		function __construct($Reader){
+			parent::__construct($Reader);
 			// set module consts
 			$this->Options['name'] = "Skytech.lt parser module";
 

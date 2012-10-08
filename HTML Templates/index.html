@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="bootstrap/css/docs.css" rel="stylesheet" type="text/css">
+        <link href="bootstrap/css/prettify.css" rel="stylesheet" type="text/css">
+        <link href="bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+        <title>{$s['title']}</title>
+    </head>
+    <body>
+        <header></header>
+        <div class="container">
+
+<!-- Docs nav
+    ================================================== -->
+            <div class="row">
+                <div class="span3 bs-docs-sidebar">
+                    <ul class="nav bs-docs-sidenav affix">
+                        <li>
+                            <a href="#?page=home">Home</a>
+                        </li>
+                        $navItems
+                        <li>
+                            <a href="#?page={$s['nav-page']}">{$s['nav-item']}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="span9">
+                    $body
+                </div>
+            </div>
+        </div>
+
+<!-- Footer
+    ================================================== -->
+        <footer></footer>
+    </body>
+</html>

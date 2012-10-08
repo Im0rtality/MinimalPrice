@@ -1,7 +1,6 @@
 <?php
-	require_once("../Shared/utils.php");
-	require_once("module.php");
-	require_once("template-manager.php");
+	require_once(dirname(__FILE__) . "/../Shared/utils.php");
+	require_once(dirname(__FILE__) . "/template-manager.php");
 
 	class WebsiteParseTemplate {
 		protected $Hostname;	

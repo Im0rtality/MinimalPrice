@@ -1,15 +1,16 @@
 <?php
-    require_once("../Shared/utils.php");
-    require_once("../Classes/wpt.php");
-    require_once("../Classes/wpt-template.php");
-    require_once("../Classes/cpu-spec.php");
-	
+	require_once(dirname(__FILE__) . "/../Shared/utils.php");
+	require_once(dirname(__FILE__) . "/../Classes/mysql.php");
+	require_once(dirname(__FILE__) . "/../Classes/wpt.php");
+	require_once(dirname(__FILE__) . "/../Classes/wpt-template.php");
+	require_once(dirname(__FILE__) . "/../Classes/cpu-spec.php");
+
 	class CpuWorldParser{	
 		
 		private $Template;
 
-		function __construct($DB, $Reader){
-			$this->DB = $DB;
+		function __construct($Reader){
+			$this->DB = MySql::getInstance();
 			$this->Reader = $Reader;	
 			$this->WebsiteBase = "http://www.cpu-world.com";
 			

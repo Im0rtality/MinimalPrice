@@ -1,7 +1,7 @@
 <?php
     function debug($data) {
 		if (empty($data)) {
-			$data = "/EMPTY/";
+			return;//$data = "/EMPTY/";
 		}
 		echo "<pre>" . print_r($data, true) . "</pre>";
 	}

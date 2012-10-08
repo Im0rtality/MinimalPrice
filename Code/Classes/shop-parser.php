@@ -1,7 +1,8 @@
 <?php
-	require_once("../Shared/utils.php");
-	require_once("module.php");
-	require_once("template-manager.php");
+	require_once(dirname(__FILE__) . "/../Shared/utils.php");
+	require_once(dirname(__FILE__) . "/module.php");
+	require_once(dirname(__FILE__) . "/mysql.php");
+	require_once(dirname(__FILE__) . "/template-manager.php");
 
 	class ShopParser extends Module{
 		protected $Hostname;	
@@ -21,8 +22,8 @@
 		protected $ShopUrl;
 		private $CatUrl;
 				
-		function __construct($DB, $Reader){
-			$this->DB = $DB;
+		function __construct($Reader){
+			$this->DB = MySql::getInstance();
 			$this->Reader = $Reader;	
 			$this->Templates = new TemplateManager($this->DB);
 			$this->DOM = new DOMDocument();
