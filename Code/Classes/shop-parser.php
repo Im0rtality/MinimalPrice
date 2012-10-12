@@ -2,6 +2,7 @@
 	require_once(dirname(__FILE__) . "/../Shared/utils.php");
 	require_once(dirname(__FILE__) . "/module.php");
 	require_once(dirname(__FILE__) . "/mysql.php");
+	require_once(dirname(__FILE__) . "/remote-reader.php");
 	require_once(dirname(__FILE__) . "/template-manager.php");
 
 	class ShopParser extends Module{
@@ -24,7 +25,7 @@
 				
 		function __construct($Reader){
 			$this->DB = MySql::getInstance();
-			$this->Reader = $Reader;	
+			$this->Reader = new RemoteReader();	
 			$this->Templates = new TemplateManager($this->DB);
 			$this->DOM = new DOMDocument();
 		}
@@ -160,15 +161,6 @@
 			//if ($docNode == NULL) debug('$docNode == NULL');
 		}
 		
-		protected function parseProducts() {
-			/*foreach($this->productList as $product) {
-				$this->getContent($this->ShopUrl . $product['href']);
-				$this->load();
-				
-			}
-			*/
-		}
-		
 		protected function getProductTechSpecByCategory($Product, $Category) {
 			switch ($Category) {
 				case "CPU":
@@ -224,12 +216,11 @@
 			}
 		}
 		
-		public function parseCategory($CatUrl) {
+		public function parsePage($CatUrl) {
 			$this->CatUrl = $CatUrl;
 			$this->getContent($this->CatUrl);
 			$this->load();
 			$this->internalParseCategory();
-			$this->parseProducts();
 		}
 				
 		protected function getOutput() {			
