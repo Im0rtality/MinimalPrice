@@ -3,13 +3,13 @@
      require_once(dirname(__FILE__) . "/../Classes/shop-parser.php");
 		
 	class SimpleShopParser extends ShopParser{	
+		private $ShopId;
 
-		function __construct($Reader){
-			parent::__construct($Reader);
+		function __construct($ShopId){
+			parent::__construct();
 			// set module consts
-			$this->Options['name'] = "Skytech.lt parser module";
-
-			$this->Templates->Load($this->GetName());
+			$this->ShopId = $ShopId;
+			$this->Templates->Load($this->ShopId);
 		}
 				
 		private function ReadyCheck(){
