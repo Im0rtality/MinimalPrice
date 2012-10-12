@@ -24,11 +24,11 @@
 	}
 
 	class AdminPageGenerator{
-		private $args = [];
+		private $args = array();
 		private $page = 'home';
 		private $output;
 		private $DB;
-		protected $modules = [];
+		protected $modules = array();
 
 		// Singleton pattern. Keep code tight for easy copy pasting to other places
     	protected static $instance = null;
