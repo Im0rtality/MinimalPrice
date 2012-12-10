@@ -5,6 +5,7 @@
 		function __construct(){
 			$this->options['file'] = debug_backtrace(FALSE)[0]['file'];
 			$this->options['class'] = debug_backtrace(FALSE)[1]['class'];
+			if (!isset($this->options['inSidebar'])) { $this->options['inSidebar'] = true; }
 			AdminPageGenerator::getInstance()->registerPage($this);
 		}
 

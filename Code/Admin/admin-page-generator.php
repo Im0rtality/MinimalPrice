@@ -79,7 +79,10 @@
 		 **/
 		public function registerPage($pageModule) {
 			$this->modules[$pageModule->getID()] = $pageModule;
-			$this->navbar[] = $pageModule->getNavItem();
+			//debug($pageModule->getOptions()['inSidebar']);
+			if ($pageModule->getOptions()['inSidebar'] === true) {
+				$this->navbar[] = $pageModule->getNavItem();
+			}
 		}
 
 		/** 
