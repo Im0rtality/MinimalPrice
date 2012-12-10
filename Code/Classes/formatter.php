@@ -59,7 +59,7 @@
         }
 
         public static function TableHeader($columns, $widths) {
-        	$code = '<table class="table table-condensed table-hover table-stripped"><tr>';
+        	$code = '<table class="table table-condensed table-hover table-stripped" width="100%"><tr>';
         	for ($i=0; $i < count($columns); $i++) { 
         		if (empty($columns[$i])) { $columns[$i] = '&nbsp;'; }
         		$width = "";
@@ -75,14 +75,19 @@
 			return $code;
         }
 
-        public static function TableRows($DataSet, $page, $idIndex = 0) {
+        public static function TableRows($DataSet, $page, $idIndex = 0, $hidden, $add_buttons) {
         	$code = "";
         	foreach ($DataSet as $Row) {
         		$code .= "<tr>";
-        		$Row[] = Formatter::EditButton($page, $Row[$idIndex], []);
-        		$Row[] = Formatter::DeleteButton($page, $Row[$idIndex], []);
-        		foreach ($Row as $Field) {
-        			$code .= "<td>{$Field}</td>";
+        		if ($add_buttons !== false) {
+					$Row[] = Formatter::EditButton($page, $Row[$idIndex], []);
+					$Row[] = Formatter::DeleteButton($page, $Row[$idIndex], []);
+				}
+        		$Keys = array_keys($Row);
+        		for ($i = 0; $i < count($Row); $i++) {
+        			if ($hidden[$i] === false) {
+        				$code .= "<td>{$Row[$Keys[$i]]}</td>";
+        			}
         		}
         		$code .= "</tr>";
         	}
@@ -90,8 +95,21 @@
         }
 
         public static function Table($Data, $Options) {
+        	if (empty($Options['add_buttons'])) { 
+        		$Options['add_buttons'] = true; 
+        	}
+
+        	if ($Options['add_buttons'] !== false) {
+        		// Add 2 columns for Edit and Delete buttons in each row
+        		$Options['column_names'][] = "";
+        		$Options['column_names'][] = "";
+        		$Options['column_widths'][] = "20px";
+        		$Options['column_widths'][] = "20px";
+            	$Options['column_hidden'][] = false; 
+	        	$Options['column_hidden'][] = false; 
+	    	}
 			$code  = Formatter::TableHeader($Options['column_names'], $Options['column_widths']);
-			$code .= Formatter::TableRows($Data, $Options['page'], $Options['id_col']);
+			$code .= Formatter::TableRows($Data, $Options['page'], $Options['id_col'], $Options['column_hidden'], $Options['add_buttons']);
 			$code .= Formatter::TableFooter();
 			return $code;        	
         }
