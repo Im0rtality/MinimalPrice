@@ -36,5 +36,26 @@
 		    }
 		    return $code;
         }
+
+        public static function EditButton($page, $id, $params) {
+        	$params["id"] = $id;
+        	$params["action"] = "edit";
+        	return Formatter::Button($page, $params, "pencil");
+        }
+	
+        public static function DeleteButton($page, $id, $params) {
+        	$params["id"] = $id;
+        	$params["action"] = "delete";
+        	return Formatter::Button($page, $params, "remove-sign", "mini", "danger");
+        }
+
+        public static function Button($page, $params, $icon, $size = "mini", $style = "") {
+        	$href = $page == "#" ? "#" : "?page={$page}";
+        	foreach ($params as $key => $value) {
+        		$href .= "&{$key}={$value}";
+        	}
+        	$code = "<a class='btn btn-{$size} btn-{$style}' href='{$href}'><i class='icon-{$icon}'></i></a>";
+        	return $code;
+        }
 	}
 ?>
