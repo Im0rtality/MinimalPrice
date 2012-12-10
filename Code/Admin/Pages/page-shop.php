@@ -19,14 +19,21 @@
 		}
 
 		public function generate() {
-			$query = "SELECT * FROM `shop`";
+			$query = "SELECT shop.id, shop.name, shop.url, country.name as cname FROM `shop`, `country` WHERE (shop.country_id = country.id)";
 
 			$code = "<h1>{$this->options['name']}</h1>";
 			
 			$DB = MySql::getInstance();
 			$DB->ExecuteSQL($query);
 			$Data = $DB->GetRecordSet();
-			$code .= Formatter::DbDataToHtmlTable($Data);
+
+			$settings['column_names'] = ["Name", "URL", "Country"];
+			$settings['column_widths'] = ["", "", ""];
+			$settings['column_hidden'] = [true, false, false, false];
+			$settings['id_col'] = "id";
+			$settings['page'] = "editshop";
+			
+			$code .= Formatter::Table($Data, $settings);
 
 			return $code;
 		}
