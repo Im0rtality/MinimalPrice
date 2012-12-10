@@ -18,8 +18,13 @@
 			$DB = MySql::getInstance();
 			$DB->ExecuteSQL($query);
 			$Data = $DB->GetRecordSet();
-			$code .= Formatter::DbDataToHtmlTable($Data);
 
+			$TableSettings['column_names'] = ["ID", "Name", "", ""];
+			$TableSettings['column_widths'] = ["20px", "", "20px", "20px"];
+			$TableSettings['id_col'] = "id";
+			$TableSettings['page'] = "editcountry";
+			
+			$code .= Formatter::Table($Data, $TableSettings);
 			return $code;
 		}
 	}
