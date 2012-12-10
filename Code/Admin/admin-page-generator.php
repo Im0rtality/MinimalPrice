@@ -96,6 +96,7 @@
 			if (isset($this->modules[$this->page])) {
 				$module = $this->modules[$this->page];
 				$template['title'] = $module->getOptions()['name'];
+				$template['header'] = $module->getHeader();
 				$template['body'] = $module->generate();
 			} else {// show admin homepage/overview
 				$template['title'] = 'Error';
