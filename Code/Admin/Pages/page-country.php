@@ -19,12 +19,13 @@
 			$DB->ExecuteSQL($query);
 			$Data = $DB->GetRecordSet();
 
-			$TableSettings['column_names'] = ["ID", "Name", "", ""];
-			$TableSettings['column_widths'] = ["20px", "", "20px", "20px"];
-			$TableSettings['id_col'] = "id";
-			$TableSettings['page'] = "editcountry";
+			$settings['column_names'] = ["Name"];
+			$settings['column_widths'] = [""];
+			$settings['column_hidden'] = [true, false];
+			$settings['id_col'] = "id";
+			$settings['page'] = "editcountry";
 			
-			$code .= Formatter::Table($Data, $TableSettings);
+			$code .= Formatter::Table($Data, $settings);
 			return $code;
 		}
 	}
