@@ -9,7 +9,7 @@
 		}
 
 		public function generate() {
-			$code = "<h1>{$this->options['name']}</h1>";
+			$code = "";
 
 			$Template['product-list'] = '//table[contains(@class,\"productListing\")][1]//tr';
 			$Template['product-list-skip'] = 1;

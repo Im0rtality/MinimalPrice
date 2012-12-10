@@ -13,7 +13,7 @@
 		public function generate() {
 			$query = "SELECT * FROM `country`";
 
-			$code = "<h1>{$this->options['name']}</h1>";
+			$code = "";
 			
 			$DB = MySql::getInstance();
 			$DB->ExecuteSQL($query);

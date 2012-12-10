@@ -13,7 +13,7 @@
 		public function generate() {
 			$query = "SELECT category.*, category_image.url FROM category, category_image WHERE category.category_image_id = category_image.id";
 
-			$code = "<h1>{$this->options['name']}</h1>";
+			$code = "";
 			
 			$DB = MySql::getInstance();
 			$DB->ExecuteSQL($query);

@@ -21,7 +21,7 @@
 		public function generate() {
 			$query = "SELECT shop.id, shop.name, shop.url, country.name as cname FROM `shop`, `country` WHERE (shop.country_id = country.id)";
 
-			$code = "<h1>{$this->options['name']}</h1>";
+			$code = "";
 			
 			$DB = MySql::getInstance();
 			$DB->ExecuteSQL($query);

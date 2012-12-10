@@ -13,7 +13,7 @@
 		}
 
 		public function generate() {
-			$code = "<h1>{$this->options['name']}</h1>";
+			$code = "";
 			$code .= '<table class="table table-condensed table-hover table-stripped"><tr><th>Page/Module</th><th>Link/ID</th><th>PHP File</th><th>Class name</th></tr>';
 			foreach (AdminPageGenerator::getInstance()->getModules() as $module) {
 				$code .= "<tr><td>{$module->options['name']}</td><td>{$module->options['link']}</td><td>{$module->options['file']}</td><td>{$module->options['class']}</td></tr>";
