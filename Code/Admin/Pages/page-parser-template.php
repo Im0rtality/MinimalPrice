@@ -29,12 +29,14 @@
 </tr>
 EOT;
 			foreach ($Data as $Row) {
+				$btnEdit = Formatter::EditButton('edittemplate', $Row["id"], []);
+				$btnDelete = Formatter::DeleteButton('edittemplate', $Row["id"], []);
 				$code .= <<<EOT
 <tr>
 	<td>{$Row['id']}</td>
 	<td>{$Row['name']}</td>
-	<td><a class='btn btn-mini' href='#' data-id='{$Row['id']}'><i class='icon-pencil'></i></a></td>
-	<td><a class='btn btn-mini btn-danger' href='#' data-id='{$Row['id']}'><i class='icon-remove-sign'></i></a></td>
+	<td>{$btnEdit}</td>
+	<td>{$btnDelete}</a></td>
 </tr>
 EOT;
 
