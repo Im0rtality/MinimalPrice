@@ -18,7 +18,14 @@
 			$DB = MySql::getInstance();
 			$DB->ExecuteSQL($query);
 			$Data = $DB->GetRecordSet();
-			$code .= Formatter::DbDataToHtmlTable($Data);
+
+			$settings['column_names'] = ["Category Name", "Image Url"];
+			$settings['column_widths'] = ["", ""];
+			$settings['column_hidden'] = [true, false, true, true, false];
+			$settings['id_col'] = "id";
+			$settings['page'] = "editcategory";
+			
+			$code .= Formatter::Table($Data, $settings);
 
 			return $code;
 		}
