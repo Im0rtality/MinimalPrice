@@ -113,5 +113,38 @@
 			$code .= Formatter::TableFooter();
 			return $code;        	
         }
+
+        public static function FormText($Data) {
+            $disabled = "";
+            if ($Data["disabled"] === true) {
+                $disabled = " disabled";
+            }
+            return "<input type='text' name='{$Data['id']}' id='{$Data['id']}' value='{$Data['value']}'{$disabled}>";
+        }
+
+        public static function Form($Data) {
+            $code = "<form class='form-horizontal' method='POST' action='?page={$Data['page']}&action=save'>";
+            foreach ($Data['fields'] as $value) {
+                if (!isset($value['disabled'])) { 
+                    $value['disabled'] = false; 
+                }
+               switch ($value['type']) {
+                    case 'text':
+                        $code .= '<div class="control-group">';
+                        $code .= "<label class='control-label' for='{$value['id']}'>{$value['label']}</label>";
+                        $code .= '<div class="controls">';
+                        $code .= Formatter::FormText($value);
+                        $code .= '</div>';
+                        $code .= '</div>';
+                }                
+            }
+            $code .= "<input type='hidden' name='id' value='{$Data['id']}'>";
+            $code .= '<div class="form-actions">';
+            $code .= '<button type="submit" class="btn btn-primary">Save changes</button>';
+            $code .= '<button type="reset" class="btn">Cancel</button>';
+            $code .= '</div>';
+            $code .= "</form>";
+            return $code;
+        }
 	}
 ?>
