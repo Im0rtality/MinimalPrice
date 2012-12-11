@@ -1,9 +1,13 @@
 <?php
     function debug($data) {
+		echo dump($data);
+	}
+	
+   function dump($data) {
 		if (empty($data)) {
 			return;//$data = "/EMPTY/";
 		}
-		echo "<pre>" . print_r($data, true) . "</pre>";
+		return "<pre>" . print_r($data, true) . "</pre>";
 	}
 	
 	function isTemplateMarker($string) {
