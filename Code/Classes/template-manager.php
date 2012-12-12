@@ -6,7 +6,7 @@
 		private $Name;
 		private $DB;
 		
-		function _construct(){
+		function __construct(){
 			$this->DB = MySql::getInstance();
 		}
 		
