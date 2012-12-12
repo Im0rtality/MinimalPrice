@@ -179,5 +179,17 @@
             $code .= "</pre></blockquote>";
             return $code;
         }
+
+
+        public static function QuerySaveFromEditor($data, $table) {
+            $query = "UPDATE `{$table}` SET ";
+            foreach($data as $key => $value) {
+                if ($key != 'id') {
+                    $query .= "{$key}='{$value}'";
+                }
+            }
+            $query .= "WHERE id = {$_POST["id"]} LIMIT 1";
+            return $query;
+        }
 	}
 ?>
