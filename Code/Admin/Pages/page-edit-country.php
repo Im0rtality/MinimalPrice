@@ -23,15 +23,8 @@
 			$code = "";
 			switch ($this->action){
 				case 'save':
-				//	$code .= dump($_POST);
 					$code .= Formatter::ArraySimpleDump2($_POST, "POST Data");
-					$query = "UPDATE `country` SET ";
-					foreach($_POST as $key => $value) {
-						if ($key != 'id') {
-							$query .= "{$key}='{$value}'";
-						}
-					}
-					$query .= "WHERE id = {$_POST["id"]} LIMIT 1";
+					$query = Formatter::QuerySaveFromEditor($_POST, "country");
 
 					
 					$DB = MySql::getInstance();
@@ -46,7 +39,7 @@
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 					$Data = $DB->GetRecordSet();
-					//$code .= dump($Data);
+
 					$code .= Formatter::ArraySimpleDump2($Data[0], "<i>$query</i>");
 
 					$FormData['id'] = $Data[0]["id"];
