@@ -21,7 +21,7 @@
 		<legend>Skytech.lt parser</legend>
 		<div class="input-append">
 			<input type="text" name="url" id="url" class="input-xxlarge" placeholder="URL of page with product list">
-			<select id="shop" class="input-medium">
+			<select id="shop" name="shop" class="input-medium">
 			  <option value="2">SKYTECH.LT</option>
 			</select>
 			<button type="submit" class="btn">PARSE</button> 
