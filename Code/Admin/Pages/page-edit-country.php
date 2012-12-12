@@ -24,7 +24,7 @@
 			switch ($this->action){
 				case 'save':
 					$code .= Formatter::ArraySimpleDump2($_POST, "POST Data");
-					$query = Formatter::QuerySaveFromEditor($_POST, "country");
+					$query = Formatter::QuerySaveEditor($_POST, "country");
 
 					
 					$DB = MySql::getInstance();
@@ -33,7 +33,7 @@
 					$code .= Formatter::Redirect('country', 3000, "Redirecting to list in 3 seconds.");
 					break;
 				case 'edit':
-					$query = "SELECT * FROM `country` WHERE id = {$_GET["id"]} LIMIT 1";
+					$query = Formatter::QueryLoadEditor("country", $_GET["id"]);
 
 					
 					$DB = MySql::getInstance();
