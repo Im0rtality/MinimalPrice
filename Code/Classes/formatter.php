@@ -172,23 +172,31 @@
         public static function ArraySimpleDump2($Array, $Caption) {
             $code = "";
             $code .= "<blockquote><cite class='muted'>{$Caption}</cite><pre class='prettyprint linenums'>";
+/*
             foreach ($Array as $key => $value) {
                 $code .= "[{$key}]\t\t {$value}\n";
             }
-           // $code .= "hello world";
+*/
+            $code .= print_r($Array, true);
             $code .= "</pre></blockquote>";
             return $code;
         }
 
 
-        public static function QuerySaveFromEditor($data, $table) {
+        public static function QuerySaveEditor($data, $table) {
             $query = "UPDATE `{$table}` SET ";
             foreach($data as $key => $value) {
                 if ($key != 'id') {
-                    $query .= "{$key}='{$value}'";
+                    $query .= "{$key}='{$value}', ";
                 }
             }
-            $query .= "WHERE id = {$_POST["id"]} LIMIT 1";
+            $query = substr($query, 0, -2);
+            $query .= " WHERE id = {$_POST["id"]} LIMIT 1";
+            return $query;
+        }
+ 
+        public static function QueryLoadEditor($table, $id) {
+            $query = "SELECT * FROM `{$table}` WHERE id = {$id} LIMIT 1";
             return $query;
         }
 	}
