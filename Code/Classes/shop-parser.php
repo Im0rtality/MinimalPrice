@@ -26,7 +26,7 @@
 		function __construct(){
 			$this->DB = MySql::getInstance();
 			$this->Reader = new RemoteReader();	
-			$this->Templates = new TemplateManager($this->DB);
+			$this->Templates = new TemplateManager();
 			$this->DOM = new DOMDocument();
 		}
 		

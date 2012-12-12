@@ -22,7 +22,7 @@
 		<div class="input-append">
 			<input type="text" name="url" id="url" class="input-xxlarge" placeholder="URL of page with product list">
 			<select id="shop" name="shop" class="input-medium">
-			  <option value="2">SKYTECH.LT</option>
+			  <option value="1">SKYTECH.LT</option>
 			</select>
 			<button type="submit" class="btn">PARSE</button> 
 		</div>
