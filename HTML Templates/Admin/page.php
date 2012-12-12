@@ -5,9 +5,12 @@
         <link href="../css/prettify.css" rel="stylesheet" type="text/css">
         <link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
         <link href="../css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+        
+        <script type="text/javascript" src="../js/prettify.js"></script>
+
         <title><?php echo $template['title']; ?></title>
     </head>
-    <body>
+    <body onload="window.prettyPrint && prettyPrint();">
         <header></header>
         <div class="container">
 <!-- Docs nav
