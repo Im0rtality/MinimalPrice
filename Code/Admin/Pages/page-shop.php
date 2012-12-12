@@ -19,7 +19,7 @@
 		}
 
 		public function generate() {
-			$query = "SELECT shop.id, shop.name, shop.url, country.name as cname FROM `shop`, `country` WHERE (shop.country_id = country.id)";
+			$query = "SELECT shop.*, country.name as cname FROM `shop`, `country` WHERE (shop.country_id = country.id)";
 
 			$code = "";
 			
@@ -29,7 +29,7 @@
 
 			$settings['column_names'] = ["Name", "URL", "Country"];
 			$settings['column_widths'] = ["", "", ""];
-			$settings['column_hidden'] = [true, false, false, false];
+			$settings['column_hidden'] = [true, false, false, true, false];
 			$settings['id_col'] = "id";
 			$settings['page'] = "editshop";
 			
