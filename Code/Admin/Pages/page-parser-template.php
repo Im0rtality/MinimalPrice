@@ -5,8 +5,8 @@
 
 	class PageParserTemplate extends PageModule implements PageGenerator{
 		function __construct(){
-			$this->options['link'] = 'parser-templates';
-			$this->options['name'] = 'Parser Templates';
+			$this->options['link'] = 'shopparsers';
+			$this->options['name'] = 'Shop Parsers';
 			parent::__construct();
 		}
 
