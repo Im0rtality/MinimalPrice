@@ -122,6 +122,14 @@
             return "<input type='text' name='{$Data['id']}' id='{$Data['id']}' value='{$Data['value']}'{$disabled}>";
         }
 
+         public static function FormTextarea($Data) {
+            $disabled = "";
+            if ($Data["disabled"] === true) {
+                $disabled = " disabled";
+            }
+            return "<textarea name='{$Data['id']}' id='{$Data['id']}' rows='10' cols='80' style='width:80%' {$disabled}>".htmlentities($Data['value'])."</textarea>";
+        }
+
         public static function Form($Data) {
             $code = "<form class='form-horizontal' method='POST' action='?page={$Data['page']}&action=save'>";
             foreach ($Data['fields'] as $value) {
@@ -136,6 +144,15 @@
                         $code .= Formatter::FormText($value);
                         $code .= '</div>';
                         $code .= '</div>';
+                        break;
+                    case 'textarea':
+                        $code .= '<div class="control-group">';
+                        $code .= "<label class='control-label' for='{$value['id']}'>{$value['label']}</label>";
+                        $code .= '<div class="controls">';
+                        $code .= Formatter::FormTextarea($value);
+                        $code .= '</div>';
+                        $code .= '</div>';
+                        break;
                 }                
             }
             $code .= "<input type='hidden' name='id' value='{$Data['id']}'>";
@@ -177,7 +194,7 @@
                 $code .= "[{$key}]\t\t {$value}\n";
             }
 */
-            $code .= print_r($Array, true);
+            $code .= htmlentities(print_r($Array, true));
             $code .= "</pre></blockquote>";
             return $code;
         }
@@ -187,11 +204,11 @@
             $query = "UPDATE `{$table}` SET ";
             foreach($data as $key => $value) {
                 if ($key != 'id') {
-                    $query .= "{$key}='{$value}', ";
+                    $query .= "{$key}='" . mysql_real_escape_string($value) . "', ";
                 }
             }
             $query = substr($query, 0, -2);
-            $query .= " WHERE id = {$_POST["id"]} LIMIT 1";
+            $query .= " WHERE (id = {$_POST["id"]}) LIMIT 1";
             return $query;
         }
  
