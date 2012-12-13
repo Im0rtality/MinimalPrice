@@ -23,8 +23,11 @@
 			$value = strip_tags($value);
 			return $value;
 		}		
-				
-		public function add($key, $value){
+		
+		/**
+		 * adds specifications one key, one value at time
+		 */
+		public function add($key, $value) {
 			$key = $this->translateKey($key);
 			if (!in_array($key, self::$IGNORED_FIELDS)) {
 				$this->data[$key] = htmlentities($this->translateValue($value));

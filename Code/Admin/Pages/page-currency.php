@@ -11,9 +11,9 @@
 		}
 
 		public function generate() {
-			$db = db::getInstance();
+			$db = DB::getInstance();
 			$currencies = R::findAll('currency');
-			$Data = R::exportAll($currencies);
+			$data = R::exportAll($currencies);
 			
 			$settings['column_names'] = ["Name", "Symbol"];
 			$settings['column_widths'] = ["", ""];
@@ -22,7 +22,7 @@
 			$settings['page'] = "editcurrency";
 			
 			$code = "";
-			$code .= Formatter::Table($Data, $settings);
+			$code .= Formatter::Table($data, $settings);
 
 			return $code;
 		}

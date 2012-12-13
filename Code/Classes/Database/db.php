@@ -2,7 +2,7 @@
 	require_once(dirname(__FILE__) . "/../../config.php");
 	require_once(dirname(__FILE__) . '/RedBean/rb.php');
 	
-	class db {
+	class DB {
 		protected static $instance;
 		
 		
@@ -25,9 +25,23 @@
 		{
 			if (!self::$instance)
 			{
-				self::$instance = new db();
+				self::$instance = new DB();
 			}
 			return self::$instance;
+		}
+		
+		
+		
+		//----- methods for working with data -----
+		public function updateRow($tableName, $data) {
+			$table = R::load($tableName, $data["id"]);
+					
+			foreach($data as $key => $value) { // key and value from associative array
+				if ($key != 'id') {
+					$table->$key = $value;
+				}
+			}
+			R::store($table);
 		}
 	}
 ?>
