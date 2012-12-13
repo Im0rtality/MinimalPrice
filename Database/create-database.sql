@@ -7,105 +7,6 @@ CREATE SCHEMA IF NOT EXISTS `minimalprice` DEFAULT CHARACTER SET utf8 ;
 USE `minimalprice` ;
 
 -- -----------------------------------------------------
--- Table `minimalprice`.`cpus`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `minimalprice`.`cpus` ;
-
-CREATE  TABLE IF NOT EXISTS `minimalprice`.`cpus` (
-  `id` INT NOT NULL ,
-  `categories_id` INT NOT NULL ,
-  `manuf` VARCHAR(45) NOT NULL ,
-  `series` VARCHAR(45) NULL ,
-  `model` VARCHAR(45) NOT NULL ,
-  `code` VARCHAR(45) NULL ,
-  `imageName` VARCHAR(45) NOT NULL ,
-  `manufURL` VARCHAR(200) NOT NULL ,
-  `systemType` VARCHAR(45) NOT NULL ,
-  `socket` VARCHAR(45) NOT NULL ,
-  `cores` INT NOT NULL ,
-  `threads` INT NOT NULL ,
-  `benchmark` INT NULL ,
-  `clockSpeed` VARCHAR(45) NOT NULL ,
-  `instructionSet` INT NOT NULL ,
-  `cacheL2` VARCHAR(45) NULL ,
-  `cacheL3` VARCHAR(45) NULL ,
-  `maxTurboFrequency` VARCHAR(45) NOT NULL ,
-  `launchDate` DATETIME NULL ,
-  `busCoreRatio` INT NULL ,
-  `busType` VARCHAR(45) NULL ,
-  `maxTDT` INT NULL ,
-  `maxRam` VARCHAR(45) NULL ,
-  `ramTypes` VARCHAR(45) NULL ,
-  `ramChannels` VARCHAR(45) NULL ,
-  `ramBandwidth` INT NULL ,
-  `integratedGPU` TINYINT(1) NOT NULL ,
-  `integratedGPUFreq` VARCHAR(45) NULL ,
-  `integratedGPUMaxFreq` VARCHAR(45) NULL ,
-  `pciExpressRevision` INT NULL ,
-  `pciExpressPorts` INT NULL ,
-  `pciExpressConfigurations` VARCHAR(45) NULL ,
-  `maxCpusConfiguration` INT NULL ,
-  `fanIncluded` TINYINT(1) NULL ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `model_UNIQUE` (`model` ASC) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `minimalprice`.`cpus_has_technologies`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `minimalprice`.`cpus_has_technologies` ;
-
-CREATE  TABLE IF NOT EXISTS `minimalprice`.`cpus_has_technologies` (
-  `cpus_id` INT NOT NULL ,
-  `technologies_id` INT NOT NULL ,
-  PRIMARY KEY (`cpus_id`, `technologies_id`) ,
-  INDEX `fk_cpus_has_technologies_cpus1` (`cpus_id` ASC) ,
-  CONSTRAINT `fk_cpus_has_technologies_cpus1`
-    FOREIGN KEY (`cpus_id` )
-    REFERENCES `minimalprice`.`cpus` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `minimalprice`.`cpus_has_inputConns`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `minimalprice`.`cpus_has_inputConns` ;
-
-CREATE  TABLE IF NOT EXISTS `minimalprice`.`cpus_has_inputConns` (
-  `cpus_id` INT NOT NULL ,
-  `conns_id` INT NOT NULL ,
-  PRIMARY KEY (`cpus_id`, `conns_id`) ,
-  INDEX `fk_cpus_has_conns_cpus1` (`cpus_id` ASC) ,
-  CONSTRAINT `fk_cpus_has_conns_cpus1`
-    FOREIGN KEY (`cpus_id` )
-    REFERENCES `minimalprice`.`cpus` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `minimalprice`.`cpus_has_outputConns`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `minimalprice`.`cpus_has_outputConns` ;
-
-CREATE  TABLE IF NOT EXISTS `minimalprice`.`cpus_has_outputConns` (
-  `cpus_id` INT NOT NULL ,
-  `conns_id` INT NOT NULL ,
-  PRIMARY KEY (`cpus_id`, `conns_id`) ,
-  INDEX `fk_cpus_has_conns_cpus2` (`cpus_id` ASC) ,
-  CONSTRAINT `fk_cpus_has_conns_cpus2`
-    FOREIGN KEY (`cpus_id` )
-    REFERENCES `minimalprice`.`cpus` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `minimalprice`.`bus_interface`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `minimalprice`.`bus_interface` ;
@@ -187,20 +88,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `minimalprice`.`product_image`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `minimalprice`.`product_image` ;
-
-CREATE  TABLE IF NOT EXISTS `minimalprice`.`product_image` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `url` VARCHAR(200) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `url_UNIQUE` (`url` ASC) ,
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `minimalprice`.`manufacturer`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `minimalprice`.`manufacturer` ;
@@ -228,7 +115,6 @@ CREATE  TABLE IF NOT EXISTS `minimalprice`.`product` (
   `series` VARCHAR(45) NOT NULL ,
   `model` VARCHAR(45) NOT NULL ,
   `code` VARCHAR(45) NOT NULL ,
-  `image_id` INT UNSIGNED NOT NULL ,
   `manufacturer_id` INT UNSIGNED NOT NULL ,
   `description` VARCHAR(200) NOT NULL ,
   `weight_kg` DECIMAL(7,4) NOT NULL ,
@@ -240,16 +126,10 @@ CREATE  TABLE IF NOT EXISTS `minimalprice`.`product` (
   UNIQUE INDEX `model_UNIQUE` (`model` ASC) ,
   UNIQUE INDEX `code_UNIQUE` (`code` ASC) ,
   INDEX `fk_products_categories1` (`category_id` ASC) ,
-  INDEX `fk_products_images1` (`image_id` ASC) ,
   INDEX `fk_products_manufacturers1` (`manufacturer_id` ASC) ,
   CONSTRAINT `fk_products_categories1`
     FOREIGN KEY (`category_id` )
     REFERENCES `minimalprice`.`category` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_products_images1`
-    FOREIGN KEY (`image_id` )
-    REFERENCES `minimalprice`.`product_image` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_products_manufacturers1`
@@ -1450,18 +1330,18 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `minimalprice`.`processor_has_technology`
+-- Table `minimalprice`.`cpu_has_technology`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `minimalprice`.`processor_has_technology` ;
+DROP TABLE IF EXISTS `minimalprice`.`cpu_has_technology` ;
 
-CREATE  TABLE IF NOT EXISTS `minimalprice`.`processor_has_technology` (
-  `processor_id` INT UNSIGNED NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `minimalprice`.`cpu_has_technology` (
+  `cpu_id` INT UNSIGNED NOT NULL ,
   `technology_id` INT UNSIGNED NOT NULL ,
-  PRIMARY KEY (`processor_id`, `technology_id`) ,
+  PRIMARY KEY (`cpu_id`, `technology_id`) ,
   INDEX `fk_processor_has_technology_technology1` (`technology_id` ASC) ,
-  INDEX `fk_processor_has_technology_processor1` (`processor_id` ASC) ,
+  INDEX `fk_processor_has_technology_processor1` (`cpu_id` ASC) ,
   CONSTRAINT `fk_processor_has_technology_processor1`
-    FOREIGN KEY (`processor_id` )
+    FOREIGN KEY (`cpu_id` )
     REFERENCES `minimalprice`.`cpu` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -2120,6 +2000,44 @@ CREATE  TABLE IF NOT EXISTS `minimalprice`.`computer_has_product` (
   CONSTRAINT `fk_computer_has_product_product1`
     FOREIGN KEY (`product_id` )
     REFERENCES `minimalprice`.`product` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `minimalprice`.`product_image`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `minimalprice`.`product_image` ;
+
+CREATE  TABLE IF NOT EXISTS `minimalprice`.`product_image` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `url` VARCHAR(200) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
+  UNIQUE INDEX `url_UNIQUE` (`url` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `minimalprice`.`product_has_product_image`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `minimalprice`.`product_has_product_image` ;
+
+CREATE  TABLE IF NOT EXISTS `minimalprice`.`product_has_product_image` (
+  `product_id` INT UNSIGNED NOT NULL ,
+  `product_image_id` INT NOT NULL ,
+  PRIMARY KEY (`product_id`, `product_image_id`) ,
+  INDEX `fk_product_has_product_image_product_image1` (`product_image_id` ASC) ,
+  INDEX `fk_product_has_product_image_product1` (`product_id` ASC) ,
+  CONSTRAINT `fk_product_has_product_image_product1`
+    FOREIGN KEY (`product_id` )
+    REFERENCES `minimalprice`.`product` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_product_has_product_image_product_image1`
+    FOREIGN KEY (`product_image_id` )
+    REFERENCES `minimalprice`.`product_image` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

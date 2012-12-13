@@ -2,7 +2,7 @@
 
 //Example Script, saves Hello World to the database.
 
-require_once(dirname(__FILE__) . "/../../Code/config.php");
+require_once(dirname(__FILE__) . "/../../config.php");
 //First, we need to include redbean
 require_once('/RedBean/rb.php');
 
