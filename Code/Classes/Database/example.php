@@ -9,26 +9,6 @@ require_once('/RedBean/rb.php');
 R::setup('mysql:host=' . MYSQL_HOST . ';dbname=' . MYSQL_NAME, MYSQL_USER, MYSQL_PASS);
 R::freeze( true );
 
-/*
-		public function generate() {
-			$query = "SELECT * FROM `country`";
-
-			$code = "";
-			
-			$DB = MySql::getInstance();
-			$DB->ExecuteSQL($query);
-			$Data = $DB->GetRecordSet();
-
-			$settings['column_names'] = ["Name"];
-			$settings['column_widths'] = [""];
-			$settings['column_hidden'] = [true, false];
-			$settings['id_col'] = "id";
-			$settings['page'] = "editcountry";
-			
-			$code .= Formatter::Table($Data, $settings);
-			return $code;
-		}
-*/
 $bean = R::load('country',1);	
 $aDullArray = $bean->export();
 print_r( $aDullArray);

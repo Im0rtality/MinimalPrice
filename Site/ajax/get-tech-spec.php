@@ -10,7 +10,10 @@
 
 		$parser = new CpuWorldParser($reader);
 		
-		debug($parser->SearchFor($_GET['sn']));
+		
+		$data = $parser->SearchFor($_GET['sn']);
+		$data->store();
+		debug($data);
 	} else {
 		die("Cannot parse: sn paremeter is empty or not set");
 	}
