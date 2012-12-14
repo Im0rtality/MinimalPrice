@@ -1,6 +1,5 @@
 <?php
 	require_once("Abstracts/tech-spec.php");
-	require_once(dirname(__FILE__) . "\Database\db.php");
 	
 	class CpuSpec extends TechSpec{	
 		private static $IGNORED_FIELDS = array();//"Features", "CPUID", "Price_at_introduction", "Type");
