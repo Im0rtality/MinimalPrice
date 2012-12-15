@@ -1,5 +1,5 @@
-﻿<?php
-	require_once(dirname(__FILE__) . "/../../Code/Shared/utils.php");
+<?php
+       	require_once(dirname(__FILE__) . "/../../Code/Shared/utils.php");
 	require_once(dirname(__FILE__) . "/../../Code/config.php");
 	require_once(dirname(__FILE__) . "/../../Code/Classes/remote-reader.php");
 	require_once(dirname(__FILE__) . "/../../Code/Parsers/parser.cpuworld.php");
