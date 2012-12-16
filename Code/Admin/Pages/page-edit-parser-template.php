@@ -17,7 +17,7 @@
 				case 'delete':
 					break;
 			}
-			$this->table = 'parser_template';
+			$this->table = 'parser';
 		}
 
 		public function generate() {
