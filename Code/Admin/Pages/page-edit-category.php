@@ -30,7 +30,7 @@
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 
-				//	$code .= Formatter::Redirect('category', 3000, "Redirecting to list in 3 seconds.");
+					$code .= Formatter::Redirect('category', 3000, "Redirecting to list in 3 seconds.");
 					break;
 				case 'edit':
 					$query = Formatter::QueryLoadEditor("category", $_GET["id"]);
