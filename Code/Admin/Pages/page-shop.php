@@ -19,18 +19,22 @@
         }
 
         public function generate() {
-            $db = DB::getInstance();
-            $shops = R::findAll('shop');
-            $data = R::exportAll($shops);
+			$query = "SELECT shop.*, country.name as cname FROM `shop`, `country` WHERE (shop.country_id = country.id)";
 
-            $settings['column_names'] = ["Country", "Parser", "Name", "URL", "Referral URL"];
-            $settings['column_widths'] = ["", "", "", "", ""];
-            $settings['column_hidden'] = [true, false, false, false, false, false];
+			$code = "";
+
+			$DB = MySql::getInstance();
+			$DB->ExecuteSQL($query);
+			$Data = $DB->GetRecordSet();
+
+            $settings['column_names'] = ["Name", "URL", "Referral URL", "Country"];
+            $settings['column_widths'] = ["", "", "", ""];
+            $settings['column_hidden'] = [true, true, true, false, false, false, false];
             $settings['id_col'] = "id";
             $settings['page'] = "editshop";
 
             $code = "";
-            $code .= Formatter::Table($data, $settings);
+            $code .= Formatter::Table($Data, $settings);
 
             return $code;
         }
