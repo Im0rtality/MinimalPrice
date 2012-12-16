@@ -27,6 +27,7 @@
                 </div>
                 <div class="span9">
                     <?php echo $template['header']; ?>
+                    <?php echo $template['toolbar']; ?>
                     <?php echo $template['body']; ?>
                 </div>
             </div>

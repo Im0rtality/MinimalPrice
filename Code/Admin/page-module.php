@@ -4,6 +4,7 @@
 		protected $action = 'none';
 
 		function __construct(){
+			$this->buttons = array();
 			$this->options['file'] = debug_backtrace(FALSE)[0]['file'];
 			$this->options['class'] = debug_backtrace(FALSE)[1]['class'];
 			if (!isset($this->options['inSidebar'])) { $this->options['inSidebar'] = true; }
@@ -34,6 +35,19 @@
 			}
 			$code = "<h1>{$this->options['name']}{$action}</h1>";
 			return $code;
+		}
+
+		function toolbar() {
+			if (empty($this->buttons)) {
+				return "";
+			} else {
+				$code = "<div class='btn-toolbar'><div class='btn-group'>";
+				foreach($this->buttons as $button) {
+					$code .= "<a href='{$button['href']}' class='btn'><i class='icon-{$button['icon']}'></i> {$button['name']}</a>";
+				}
+				$code .= "</div></div>";
+				return $code;
+			}
 		}
 
 	}

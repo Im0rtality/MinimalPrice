@@ -98,6 +98,7 @@
 				$template['title'] = $module->getOptions()['name'];
 				$template['header'] = $module->getHeader();
 				$template['body'] = $module->generate();
+				$template['toolbar'] = $module->toolbar();
 			} else {// show admin homepage/overview
 				$template['title'] = 'Error';
 				$template['body'] = "<h1>Invalid page parameter: '{$this->page}'</h1>";
