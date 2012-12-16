@@ -11,7 +11,7 @@
 		}
 
 		public function generate() {
-			$query = "SELECT category.*, category_image.url FROM category, category_image WHERE category.category_image_id = category_image.id";
+			$query = "SELECT category.*, cimage.url FROM category, cimage WHERE category.cimage_id = cimage.id";
 
 			$code = "";
 			
@@ -21,7 +21,7 @@
 
 			$settings['column_names'] = ["Category Name", "Image Url"];
 			$settings['column_widths'] = ["", ""];
-			$settings['column_hidden'] = [true, false, true, true, false];
+			$settings['column_hidden'] = [true, true, false, true, false];
 			$settings['id_col'] = "id";
 			$settings['page'] = "editcategory";
 			
