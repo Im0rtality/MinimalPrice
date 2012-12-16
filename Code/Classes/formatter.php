@@ -122,6 +122,25 @@
             return "<input type='text' name='{$Data['id']}' id='{$Data['id']}' value='{$Data['value']}'{$disabled}>";
         }
 
+        public static function FormSelect($Data) {
+            $disabled = "";
+            if ($Data["disabled"] === true) {
+                $disabled = " disabled";
+            }
+            $code = "<select name='{$Data['id']}' id='{$Data['id']}'{$disabled}>";
+            foreach($Data['values'] as $Row) {
+                $keys = array_keys($Row);
+
+                $selected = "";
+                if ($Data['value'] == $Row[$keys[0]]) {
+                    $selected = " selected";
+                }
+                $code .= "<option value='{$Row[$keys[0]]}'{$selected}>{$Row[$keys[1]]}</option>";
+            }
+            $code .= "</select>";
+            return $code;
+        }
+
          public static function FormTextarea($Data) {
             $disabled = "";
             if ($Data["disabled"] === true) {
@@ -130,30 +149,34 @@
             return "<textarea name='{$Data['id']}' id='{$Data['id']}' rows='10' cols='80' style='width:80%' {$disabled}>".htmlentities($Data['value'])."</textarea>";
         }
 
+        public static function FormAddLabel($Code, $for, $label) {
+            $code = '<div class="control-group">';
+            $code .= "<label class='control-label' for='{$for}'>{$label}</label>";
+            $code .= '<div class="controls">';
+            $code .= $Code;
+            $code .= '</div>';
+            $code .= '</div>';
+            return $code;
+        }
+
         public static function Form($Data) {
             $code = "<form class='form-horizontal' method='POST' action='?page={$Data['page']}&action=save'>";
             foreach ($Data['fields'] as $value) {
                 if (!isset($value['disabled'])) { 
                     $value['disabled'] = false; 
                 }
-               switch ($value['type']) {
+                switch ($value['type']) {
                     case 'text':
-                        $code .= '<div class="control-group">';
-                        $code .= "<label class='control-label' for='{$value['id']}'>{$value['label']}</label>";
-                        $code .= '<div class="controls">';
-                        $code .= Formatter::FormText($value);
-                        $code .= '</div>';
-                        $code .= '</div>';
-                        break;
+                        $ctrl = Formatter::FormText($value);
+                         break;
                     case 'textarea':
-                        $code .= '<div class="control-group">';
-                        $code .= "<label class='control-label' for='{$value['id']}'>{$value['label']}</label>";
-                        $code .= '<div class="controls">';
-                        $code .= Formatter::FormTextarea($value);
-                        $code .= '</div>';
-                        $code .= '</div>';
+                        $ctrl = Formatter::FormTextarea($value);
+                        break;
+                    case 'select':
+                        $ctrl = Formatter::FormSelect($value);
                         break;
                 }                
+                $code .= Formatter::FormAddLabel($ctrl, $value['id'], $value['label']);
             }
             $code .= "<input type='hidden' name='id' value='{$Data['id']}'>";
             $code .= '<div class="form-actions">';
@@ -201,20 +224,46 @@
 
 
         public static function QuerySaveEditor($data, $table) {
-            $query = "UPDATE `{$table}` SET ";
-            foreach($data as $key => $value) {
-                if ($key != 'id') {
-                    $query .= "{$key}='" . mysql_real_escape_string($value) . "', ";
+            if (empty($_POST["id"])) {
+                $fields = "";
+                $values = "";
+                foreach($data as $key => $value) {
+                    if ($key != 'id') {
+                        $fields .= $key . ", ";
+                        $values .= "'" . mysql_real_escape_string($value) . "', ";
+                    }
                 }
+                $fields = substr($fields, 0, -2);
+                $values = substr($values, 0, -2);
+                $query = "INSERT INTO `{$table}` ({$fields}) VALUES ({$values})";
+                return $query;
+            } else {
+                $query = "UPDATE `{$table}` SET ";
+                foreach($data as $key => $value) {
+                    if ($key != 'id') {
+                        $query .= "{$key}='" . mysql_real_escape_string($value) . "', ";
+                    }
+                }
+                $query = substr($query, 0, -2);
+                $query .= " WHERE (id = {$_POST["id"]}) LIMIT 1";
+                return $query;
             }
-            $query = substr($query, 0, -2);
-            $query .= " WHERE (id = {$_POST["id"]}) LIMIT 1";
-            return $query;
         }
  
         public static function QueryLoadEditor($table, $id) {
             $query = "SELECT * FROM `{$table}` WHERE id = {$id} LIMIT 1";
             return $query;
+        }
+
+        public static function QueryForSelect($table, $label) {
+            return "SELECT id, $label FROM $table ORDER BY $label ASC";
+        }
+
+        public static function GetDataForSelect($table, $label) {
+            $query = Formatter::QueryForSelect($table, $label);
+            $DB = MySql::getInstance();
+            $DB->ExecuteSQL($query);
+            return $DB->GetRecordSet();
         }
 	}
 ?>
