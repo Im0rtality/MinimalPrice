@@ -11,7 +11,7 @@
 		}
 
 		public function generate() {
-			$query = "SELECT * FROM `parser_template`";
+			$query = "SELECT * FROM `parser`";
 
 			$code = "";
 			
