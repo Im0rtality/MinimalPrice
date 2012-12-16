@@ -13,7 +13,7 @@
 		function Load($ID) {
 			// load $this->Template from DB
 			// for now lets hardcode data for skytech.lt
-			$this->DB->ExecuteSQL("SELECT * FROM parser_template WHERE (id={$ID}) LIMIT 1");			
+			$this->DB->ExecuteSQL("SELECT * FROM parser WHERE (id={$ID}) LIMIT 1");			
 			$Data = $this->DB->GetRecordSet()[0];
 			$this->Name = $Data['name'];
 			$this->Template = json_decode($Data['value'], true);
