@@ -52,18 +52,18 @@
 					
 					$FormData['fields'][] = ["label" => "Category",
 											 "type" => "text", 
-											 "id" => "category", 
-											 "value" => $Data[0]["category"]];
+											 "id" => "name", 
+											 "value" => $Data[0]["name"]];
 
 					$FormData['fields'][] = ["label" => "Parent ID",
 											 "type" => "text", 
-											 "id" => "parent_category_id", 
-											 "value" => $Data[0]["parent_category_id"]];
+											 "id" => "parent_id", 
+											 "value" => $Data[0]["parent_id"]];
 
 					$FormData['fields'][] = ["label" => "Image ID",
 											 "type" => "text", 
-											 "id" => "category_image_id", 
-											 "value" => $Data[0]["category_image_id"]];
+											 "id" => "cimage_id", 
+											 "value" => $Data[0]["cimage_id"]];
 					$code .= Formatter::Form($FormData, NULL);
 				break;
 
