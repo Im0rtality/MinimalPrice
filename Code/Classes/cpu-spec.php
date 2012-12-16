@@ -23,15 +23,15 @@
 			$value = strip_tags($value);
 			return $value;
 		}		
-				
-		public function add($key, $value){
+		
+		public function add($key, $value) {
 			$key = $this->translateKey($key);
 			if (!in_array($key, self::$IGNORED_FIELDS)) {
 				$this->data[$key] = htmlentities($this->translateValue($value));
 			}
 		}
 		
-		public function get(){
+		public function get() {
 			return $this->data;
 		}
 	}
