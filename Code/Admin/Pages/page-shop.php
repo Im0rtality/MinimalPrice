@@ -7,37 +7,34 @@
  *  2) change body of generate() method with appropriate code
  * 
  * **/
-	require_once(dirname(__FILE__) . "\..\..\Classes\mysql.php");
-	require_once(dirname(__FILE__) . '\..\..\Classes\formatter.php');
-	require_once(dirname(__FILE__) . '\..\interface.page-generator.php');
+    require_once(dirname(__FILE__) . "\..\..\Classes\Database\db.php");
+    require_once(dirname(__FILE__) . '\..\..\Classes\formatter.php');
+    require_once(dirname(__FILE__) . '\..\interface.page-generator.php');
 
-	class PageShop extends PageModule implements PageGenerator{
-		function __construct(){
-			$this->options['link'] = 'shop';
-			$this->options['name'] = 'Shops';
-			parent::__construct();
-		}
+    class PageShop extends PageModule implements PageGenerator{
+        function __construct(){
+            $this->options['link'] = 'shop';
+            $this->options['name'] = 'Shops';
+            parent::__construct();
+        }
 
-		public function generate() {
-			$query = "SELECT shop.*, country.name as cname FROM `shop`, `country` WHERE (shop.country_id = country.id)";
+        public function generate() {
+            $db = DB::getInstance();
+            $shops = R::findAll('shop');
+            $data = R::exportAll($shops);
 
-			$code = "";
-			
-			$DB = MySql::getInstance();
-			$DB->ExecuteSQL($query);
-			$Data = $DB->GetRecordSet();
+            $settings['column_names'] = ["Country", "Parser", "Name", "URL", "Referral URL"];
+            $settings['column_widths'] = ["", "", "", "", ""];
+            $settings['column_hidden'] = [true, false, false, false, false, false];
+            $settings['id_col'] = "id";
+            $settings['page'] = "editshop";
 
-			$settings['column_names'] = ["Name", "URL", "Country"];
-			$settings['column_widths'] = ["", "", ""];
-			$settings['column_hidden'] = [true, false, false, true, false];
-			$settings['id_col'] = "id";
-			$settings['page'] = "editshop";
-			
-			$code .= Formatter::Table($Data, $settings);
+            $code = "";
+            $code .= Formatter::Table($data, $settings);
 
-			return $code;
-		}
-	}
+            return $code;
+        }
+    }
 
-	new PageShop();
+    new PageShop();
 ?>
