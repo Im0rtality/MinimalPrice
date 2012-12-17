@@ -1144,11 +1144,11 @@ DROP TABLE IF EXISTS `minimalprice`.`currency` ;
 
 CREATE  TABLE IF NOT EXISTS `minimalprice`.`currency` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NOT NULL ,
-  `symbol` VARCHAR(3) NOT NULL ,
+  `code` VARCHAR(3) NOT NULL ,
+  `eur_ratio` FLOAT NOT NULL ,
   PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC) ,
-  UNIQUE INDEX `symbol_UNIQUE` (`symbol` ASC) ,
+  UNIQUE INDEX `name_UNIQUE` (`code` ASC) ,
+  UNIQUE INDEX `symbol_UNIQUE` (`eur_ratio` ASC) ,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) )
 ENGINE = InnoDB;
 
