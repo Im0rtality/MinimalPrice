@@ -49,12 +49,20 @@
         	return CodegenTable::Button($page, $params, "remove-sign", "mini", "danger");
         }
 
-        public static function Button($page, $params, $icon, $size = "mini", $style = "") {
-        	$href = $page == "#" ? "#" : "?page={$page}";
+        public static function Button($page, $params, $icon, $size = "mini", $style = "", $caption = "") {
+            if (substr($page, 0, 1) == '!') {
+                $href = substr($page, 1);
+            } else {
+            	$href = $page == "#" ? "#" : "?page={$page}";
+            }
+
         	foreach ($params as $key => $value) {
         		$href .= "&{$key}={$value}";
         	}
-        	$code = "<a class='btn btn-{$size} btn-{$style}' href='{$href}'><i class='icon-{$icon}'></i></a>";
+            if (!empty($caption)) {
+                $caption = " " . $caption;
+            }
+        	$code = "<a class='btn btn-{$size} btn-{$style}' href='{$href}'><i class='icon-{$icon}'></i>{$caption}</a>";
         	return $code;
         }
 
