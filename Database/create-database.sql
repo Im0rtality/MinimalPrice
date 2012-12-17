@@ -115,7 +115,7 @@ CREATE  TABLE IF NOT EXISTS `minimalprice`.`product` (
   `manufacturer_id` INT UNSIGNED NOT NULL ,
   `series` VARCHAR(45) NOT NULL ,
   `model` VARCHAR(45) NOT NULL ,
-  `code` VARCHAR(45) NOT NULL ,
+  `serial` VARCHAR(45) NOT NULL ,
   `description` VARCHAR(200) NOT NULL ,
   `weight_kg` DECIMAL(7,4) NULL ,
   `width_mm` INT NULL ,
@@ -124,7 +124,7 @@ CREATE  TABLE IF NOT EXISTS `minimalprice`.`product` (
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
   UNIQUE INDEX `model_UNIQUE` (`model` ASC) ,
-  UNIQUE INDEX `code_UNIQUE` (`code` ASC) ,
+  UNIQUE INDEX `code_UNIQUE` (`serial` ASC) ,
   INDEX `fk_products_categories1` (`category_id` ASC) ,
   INDEX `fk_product_manufacturer1` (`manufacturer_id` ASC) ,
   CONSTRAINT `fk_products_categories1`
@@ -1971,7 +1971,7 @@ DROP TABLE IF EXISTS `minimalprice`.`merchandise` ;
 
 CREATE  TABLE IF NOT EXISTS `minimalprice`.`merchandise` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `product_id` INT UNSIGNED NOT NULL ,
+  `product_id` INT UNSIGNED NULL ,
   `shop_id` INT UNSIGNED NOT NULL ,
   `currency_id` INT UNSIGNED NOT NULL ,
   `cost` INT NOT NULL ,
