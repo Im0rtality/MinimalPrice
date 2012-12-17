@@ -43,6 +43,10 @@
 
 					$code .= Formatter::ArraySimpleDump2($Data[0], "<i>$query</i>");
 
+				case 'add':
+					if (empty($Data)) {
+						$Data[0] = array("id" => null, "name" => null, "value" => null);
+					}
 					$FormData['id'] = $Data[0]["id"];
 					$FormData['page'] = "editshopparser";
 					$FormData['fields'][] = ["label" => "ID",
