@@ -19,7 +19,7 @@
         }
 
         public function generate() {
-			$query = "SELECT shop.*, country.name as cname FROM `shop`, `country` WHERE (shop.country_id = country.id)";
+			$query = "SELECT shop.*, country.name as cname, parser.name as pname FROM `shop`, `country`, `parser` WHERE (shop.country_id = country.id) AND (shop.parser_id = parser.id)";
 
 			$code = "";
 
@@ -27,9 +27,9 @@
 			$DB->ExecuteSQL($query);
 			$Data = $DB->GetRecordSet();
 
-            $settings['column_names'] = ["Name", "URL", "Referral URL", "Country"];
-            $settings['column_widths'] = ["", "", "", ""];
-            $settings['column_hidden'] = [true, true, true, false, false, false, false];
+            $settings['column_names'] = ["Name", "URL", "Referral URL", "Country", "Parser"];
+            $settings['column_widths'] = ["", "", "", "", ""];
+            $settings['column_hidden'] = [true, true, true, false, false, false, false, false];
             $settings['id_col'] = "id";
             $settings['page'] = "editshop";
 
