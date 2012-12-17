@@ -9,14 +9,6 @@
 			$this->options['name'] = 'Shop Parser Editor';
 			$this->options['inSidebar'] = false;
 			parent::__construct();
-			switch ($this->action) {
-				case 'edit':
-					break;
-				case 'save':
-					break;
-				case 'delete':
-					break;
-			}
 			$this->table = 'parser';
 		}
 
