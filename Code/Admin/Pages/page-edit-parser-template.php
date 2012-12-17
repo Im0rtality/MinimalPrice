@@ -31,7 +31,7 @@
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 
-					$code .= Formatter::Redirect('shopparsers', 3000, "Redirecting to list in 3 seconds.");
+					$code .= Formatter::Redirect('shopparser', 3000, "Redirecting to list in 3 seconds.");
 					break;
 				case 'edit':
 					$query = Formatter::QueryLoadEditor($this->table, $_GET["id"]);

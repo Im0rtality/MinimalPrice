@@ -5,9 +5,13 @@
 
 	class PageParserTemplate extends PageModule implements PageGenerator{
 		function __construct(){
-			$this->options['link'] = 'shopparsers';
+			$this->options['link'] = 'shopparser';
 			$this->options['name'] = 'Shop Parsers';
 			parent::__construct();
+        	$this->buttons[] = array(
+        			"name" => "Add", 
+        			"href" => "?page=edit{$this->options['link']}&action=add", 
+        			"icon" => "plus");
 		}
 
 		public function generate() {
@@ -23,7 +27,7 @@
 			$settings['column_widths'] = [""];
 			$settings['column_hidden'] = [true, false, true];
 			$settings['id_col'] = "id";
-			$settings['page'] = "editshopparser";
+			$settings['page'] = "edit{$this->options['link']}";
 			
 			$code .= Formatter::Table($Data, $settings);
 
