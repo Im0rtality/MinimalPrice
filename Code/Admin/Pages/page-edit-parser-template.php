@@ -25,6 +25,13 @@
 
 					$code .= Formatter::Redirect('shopparser', 3000, "Redirecting to list in 3 seconds.");
 					break;
+				case 'delete':
+					$DB = MySql::getInstance();
+					$DB->ExecuteSQL(Formatter::QueryDeleteEntry('parser', $_GET["id"]));
+
+					$code .= Formatter::Redirect('shopparser', 3000, "Redirecting to list in 3 seconds.");
+
+					break;
 				case 'edit':
 					$query = Formatter::QueryLoadEditor($this->table, $_GET["id"]);
 
