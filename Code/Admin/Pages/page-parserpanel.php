@@ -10,40 +10,42 @@
 		}
 
 		public function generate() {
+			$query = "SELECT shop.*, parser.name as pname FROM `shop`, `country`, `parser` WHERE (shop.country_id = country.id) AND (shop.parser_id = parser.id)";
+
 			$code = "";
-			$code .= <<<EOT
-<html>
-	<head>
-	</head>
-<body>
-	<form method="GET" action="../ajax/parser.php" class="form-inline">
-		<legend>Skytech.lt parser</legend>
-		<div class="input-append">
-			<input type="text" name="url" id="url" class="input-xxlarge" placeholder="URL of page with product list">
-			<select id="shop" name="shop" class="input-medium">
-			  <option value="1">SKYTECH.LT</option>
-			</select>
-			<button type="submit" class="btn">PARSE</button> 
-		</div>
-		<p class="muted">Sample data: http://www.skytech.lt/procesoriai-stac-komp-procesoriai-c-86_85_182_584.html?pagesize=500</p>
-	</form>
 
-	<form method="GET" action="../ajax/get-tech-spec.php">
-		<legend>cpu-world.com parser</legend>	
-		<div class="input-append">
-			<input type="text" name="sn" id="url" class="input-xlarge" placeholder="Serial Number of CPU">
-			<select id="category" class="input-medium">
-			  <option value="3">CPU</option>
-			</select>
-			<button type="submit" class="btn">PARSE</button> 
-		</div>
-		<p class="muted">Sample data: SDX140HBK13GQ</p>
-</form>
-</body>
-</html>
-EOT;
+			$DB = MySql::getInstance();
+			$DB->ExecuteSQL($query);
+			$Data = $DB->GetRecordSet();
 
-			return $code;
+            $settings['column_names'] = ["Name", "URL", "Parser"];
+            $settings['column_widths'] = ["", "100px", ""];
+            $settings['column_hidden'] = [true, true, true, false, false, true, false];
+            $settings['id_col'] = "id";
+            $settings['page'] = "edit{$this->options['link']}";
+
+
+			$settings['column_hidden'][] = false;
+			$settings['column_names'][] = "&nbsp;";
+			$settings['column_widths'][] = "40px";
+			$code  = CodegenTable::TableHeader($settings['column_names'], $settings['column_widths']);
+
+        	foreach ($Data as $Row) {
+        		//debug($row);
+        		$code .= "<tr>";
+				$params = array("parser_id" => $Row['parser_id'], "shop" => $Row['id'], "url" => $Row['url']);
+				$Row[] = CodegenTable::Button("!../ajax/parser.php?", $params, "download", "mini", "warning", "Parse");
+        		$Keys = array_keys($Row);
+        		for ($i = 0; $i < count($Row); $i++) {
+        			if ($settings['column_hidden'][$i] === false) {
+        				$code .= "<td style='overflow:hidden; white-space:nowrap; text-overflow:ellipsis;'>{$Row[$Keys[$i]]}</td>";
+        			}
+        		}
+        		$code .= "</tr>";
+        	}
+
+			$code .= CodegenTable::TableFooter();
+            return $code;
 		}
 	}
 
