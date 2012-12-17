@@ -222,6 +222,10 @@
             return $code;
         }
 
+        public static function QueryDeleteEntry($table, $id) {
+            $query = "DELETE FROM {$table} WHERE (id = {$id}) LIMIT 1";
+            return $query;
+        }
 
         public static function QuerySaveEditor($data, $table) {
             if (empty($_POST["id"])) {
