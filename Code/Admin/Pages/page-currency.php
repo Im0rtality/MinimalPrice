@@ -19,7 +19,7 @@
 			$currencies = R::findAll('currency');
 			$data = R::exportAll($currencies);
 			
-			$settings['column_names'] = ["Name", "Symbol"];
+			$settings['column_names'] = ["Code", "EUR Ratio"];
 			$settings['column_widths'] = ["", ""];
 			$settings['column_hidden'] = [true, false, false];
 			$settings['id_col'] = "id";

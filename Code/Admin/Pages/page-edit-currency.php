@@ -23,29 +23,38 @@
 			$code = "";
 			switch ($this->action){
 				case 'edit':
-					$db = DB::getInstance();
-					$currency = R::load('currency', $_GET["id"]);
-					$array = $currency->export();
+					$query = Formatter::QueryLoadEditor("currency", $_GET["id"]);
 
-					$FormData['id'] = $array["id"];
+					
+					$DB = MySql::getInstance();
+					$DB->ExecuteSQL($query);
+					$Data = $DB->GetRecordSet();
+
+					$code .= Formatter::ArraySimpleDump2($Data[0], "<i>$query</i>");
+
+				case 'add':
+					if (empty($Data)) {
+						$Data[0] = array("id" => null, "code" => null, "eur_ratio" => null);
+					}
+					$FormData['id'] = $Data[0]["id"];
 					$FormData['page'] = "editcurrency";
 					$FormData['fields'][] = ["label" => "ID",
 											 "type" => "text", 
 											 "id" => "", 
-											 "value" => $array["id"], 
+											 "value" => $Data[0]["id"], 
 											 "disabled" => true];
 					
-					$FormData['fields'][] = ["label" => "Name",
+					$FormData['fields'][] = ["label" => "Code",
 											 "type" => "text", 
-											 "id" => "name", 
-											 "value" => $array["name"]];
+											 "id" => "code", 
+											 "value" => $Data[0]["code"]];
 
-					$FormData['fields'][] = ["label" => "Symbol",
+					$FormData['fields'][] = ["label" => "EUR Ratio",
 											 "type" => "text", 
-											 "id" => "symbol", 
-											 "value" => $array["symbol"]];
+											 "id" => "eur_ratio", 
+											 "value" => $Data[0]["eur_ratio"]];
 					$code .= Formatter::Form($FormData, NULL);
-				break;
+					break;
 				
 				case 'save':
 					$code .= Formatter::ArraySimpleDump2($_POST, "POST Data");
@@ -56,12 +65,13 @@
                     R::store($currency);
 					
 					$code .= Formatter::Redirect('currency', 3000, "Redirecting to list in 3 seconds.");
-				break;
+					break;
 				
 				case 'delete':
 					$db = DB::getInstance();
 					$currency = R::load('currency', $_GET["id"]);
 					R::trash($currency);
+					$code .= Formatter::Redirect('currency', 3000, "Redirecting to list in 3 seconds.");
 				break;
 
 			}
