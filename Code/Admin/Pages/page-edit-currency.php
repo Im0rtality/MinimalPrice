@@ -51,9 +51,9 @@
 					$code .= Formatter::ArraySimpleDump2($_POST, "POST Data");
 					
 					$db = DB::getInstance();
-                                        $currency = R::dispense('currency');
-                                        $currency->import($_POST);
-                                        R::store($currency);
+                    $currency = R::dispense('currency');
+                    $currency->import($_POST);
+                    R::store($currency);
 					
 					$code .= Formatter::Redirect('currency', 3000, "Redirecting to list in 3 seconds.");
 				break;
