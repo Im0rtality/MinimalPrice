@@ -259,11 +259,15 @@
             return "SELECT id, $label FROM $table ORDER BY $label ASC";
         }
 
-        public static function GetDataForSelect($table, $label) {
+        public static function GetDataForSelect($table, $label, $addNullValue = false) {
             $query = Formatter::QueryForSelect($table, $label);
             $DB = MySql::getInstance();
             $DB->ExecuteSQL($query);
-            return $DB->GetRecordSet();
+            $data = $DB->GetRecordSet();
+            if ($addNullValue === true) {
+                array_unshift($data, array("id" => 0, $label => "NULL"));
+            }
+            return $data;
         }
 	}
 ?>
