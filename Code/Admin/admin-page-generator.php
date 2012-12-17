@@ -2,7 +2,7 @@
 	//	required for page modules
 	require_once(dirname(__FILE__) . "/page-module.php");
 	//	required for PageHome class
-	require_once(dirname(__FILE__) . "/../Classes/formatter.php");
+//	require_once(dirname(__FILE__) . "/../Classes/formatter.php");
 	require_once(dirname(__FILE__) . "/interface.page-generator.php");
 	
 	class PageHome extends PageModule implements PageGenerator{

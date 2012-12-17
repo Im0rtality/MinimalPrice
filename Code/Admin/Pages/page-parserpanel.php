@@ -1,6 +1,5 @@
 <?php
 	require_once(dirname(__FILE__) . "/../../Classes/mysql.php");
-	require_once(dirname(__FILE__) . '/../../Classes/formatter.php');
 	require_once(dirname(__FILE__) . '/../interface.page-generator.php');
 
 	class PageParserPanel extends PageModule implements PageGenerator{

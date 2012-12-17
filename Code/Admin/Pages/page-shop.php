@@ -8,7 +8,7 @@
  * 
  * **/
     require_once(dirname(__FILE__) . "\..\..\Classes\Database\db.php");
-    require_once(dirname(__FILE__) . '\..\..\Classes\formatter.php');
+    require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\table.php');
     require_once(dirname(__FILE__) . '\..\interface.page-generator.php');
 
     class PageShop extends PageModule implements PageGenerator{
@@ -38,7 +38,7 @@
             $settings['page'] = "edit{$this->options['link']}";
 
             $code = "";
-            $code .= Formatter::Table($Data, $settings);
+            $code .= CodegenTable::Table($Data, $settings);
 
             return $code;
         }

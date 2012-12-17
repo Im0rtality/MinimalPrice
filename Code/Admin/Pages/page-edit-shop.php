@@ -1,6 +1,8 @@
 <?php
 	require_once(dirname(__FILE__) . "\..\..\Classes\mysql.php");
-	require_once(dirname(__FILE__) . '\..\..\Classes\formatter.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\form.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\query.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\misc.php');
 	require_once(dirname(__FILE__) . '\..\interface.page-generator.php');
 
 	class PageEditShop extends PageModule implements PageGenerator{
@@ -23,30 +25,30 @@
 			$code = "";
 			switch ($this->action){
 				case 'save':
-					$code .= Formatter::ArraySimpleDump2($_POST, "POST Data");
-					$query = Formatter::QuerySaveEditor($_POST, "shop");
+					$code .= CodegenMisc::ArraySimpleDump2($_POST, "POST Data");
+					$query = CodegenQuery::QuerySaveEditor($_POST, "shop");
 
 					
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 
-					$code .= Formatter::Redirect('shop', 3000, "Redirecting to list in 3 seconds.");
+					$code .= CodegenMisc::Redirect('shop', 3000, "Redirecting to list in 3 seconds.");
 					break;
 				case 'delete':
 					$DB = MySql::getInstance();
-					$DB->ExecuteSQL(Formatter::QueryDeleteEntry('shop', $_GET["id"]));
+					$DB->ExecuteSQL(CodegenQuery::QueryDeleteEntry('shop', $_GET["id"]));
 
-					$code .= Formatter::Redirect('shop', 3000, "Redirecting to list in 3 seconds.");
+					$code .= CodegenMisc::Redirect('shop', 3000, "Redirecting to list in 3 seconds.");
 					break;
 			case 'edit':
-					$query = Formatter::QueryLoadEditor("shop", $_GET["id"]);
+					$query = CodegenQuery::QueryLoadEditor("shop", $_GET["id"]);
 
 					
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 					$Data = $DB->GetRecordSet();
 
-					$code .= Formatter::ArraySimpleDump2($Data[0], "<i>$query</i>");
+					$code .= CodegenMisc::ArraySimpleDump2($Data[0], "<i>$query</i>");
 
 				case 'add':
 					if (empty($Data)) {
@@ -65,13 +67,13 @@
 											 "type" => "select", 
 											 "id" => "parser_id", 
 											 "value" => $Data[0]["parser_id"], 
-											 "values" => Formatter::GetDataForSelect('parser', 'name')];
+											 "values" => CodegenQuery::GetDataForSelect('parser', 'name')];
 
 					$FormData['fields'][] = ["label" => "Country",
 											 "type" => "select", 
 											 "id" => "country_id", 
 											 "value" => $Data[0]["country_id"], 
-											 "values" => Formatter::GetDataForSelect('country', 'name')];
+											 "values" => CodegenQuery::GetDataForSelect('country', 'name')];
 
 					$FormData['fields'][] = ["label" => "Name",
 											 "type" => "text", 
@@ -88,7 +90,7 @@
 											 "id" => "referral_url", 
 											 "value" => $Data[0]["referral_url"]];
 
-					$code .= Formatter::Form($FormData, NULL);
+					$code .= CodegenForm::Form($FormData, NULL);
 				break;
 
 			}

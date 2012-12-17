@@ -1,6 +1,8 @@
 <?php
 	require_once(dirname(__FILE__) . "\..\..\Classes\mysql.php");
-	require_once(dirname(__FILE__) . '\..\..\Classes\formatter.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\form.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\query.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\misc.php');
 	require_once(dirname(__FILE__) . '\..\interface.page-generator.php');
 
 	class PageEditShopParser extends PageModule implements PageGenerator{
@@ -16,31 +18,31 @@
 			$code = "";
 			switch ($this->action){
 				case 'save':
-					$code .= Formatter::ArraySimpleDump2($_POST, "POST Data");
-					$query = Formatter::QuerySaveEditor($_POST, $this->table);
+					$code .= CodegenMisc::ArraySimpleDump2($_POST, "POST Data");
+					$query = CodegenQuery::QuerySaveEditor($_POST, $this->table);
 
 					
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 
-					$code .= Formatter::Redirect('shopparser', 3000, "Redirecting to list in 3 seconds.");
+					$code .= CodegenMisc::Redirect('shopparser', 3000, "Redirecting to list in 3 seconds.");
 					break;
 				case 'delete':
 					$DB = MySql::getInstance();
-					$DB->ExecuteSQL(Formatter::QueryDeleteEntry('parser', $_GET["id"]));
+					$DB->ExecuteSQL(CodegenQuery::QueryDeleteEntry('parser', $_GET["id"]));
 
-					$code .= Formatter::Redirect('shopparser', 3000, "Redirecting to list in 3 seconds.");
+					$code .= CodegenMisc::Redirect('shopparser', 3000, "Redirecting to list in 3 seconds.");
 
 					break;
 				case 'edit':
-					$query = Formatter::QueryLoadEditor($this->table, $_GET["id"]);
+					$query = CodegenQuery::QueryLoadEditor($this->table, $_GET["id"]);
 
 					
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 					$Data = $DB->GetRecordSet();
 
-					$code .= Formatter::ArraySimpleDump2($Data[0], "<i>$query</i>");
+					$code .= CodegenMisc::ArraySimpleDump2($Data[0], "<i>$query</i>");
 
 				case 'add':
 					if (empty($Data)) {
@@ -64,7 +66,7 @@
 											 "id" => "value", 
 											 "value" => $Data[0]["value"]];
 
-					$code .= Formatter::Form($FormData, NULL);
+					$code .= CodegenForm::Form($FormData, NULL);
 				break;
 
 			}

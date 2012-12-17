@@ -1,6 +1,8 @@
 <?php
 	require_once(dirname(__FILE__) . "\..\..\Classes\Database\db.php");
-	require_once(dirname(__FILE__) . '\..\..\Classes\formatter.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\form.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\query.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\misc.php');
 	require_once(dirname(__FILE__) . '\..\interface.page-generator.php');
 
 	class PageEditCurrency extends PageModule implements PageGenerator{
@@ -23,14 +25,14 @@
 			$code = "";
 			switch ($this->action){
 				case 'edit':
-					$query = Formatter::QueryLoadEditor("currency", $_GET["id"]);
+					$query = CodegenQuery::QueryLoadEditor("currency", $_GET["id"]);
 
 					
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 					$Data = $DB->GetRecordSet();
 
-					$code .= Formatter::ArraySimpleDump2($Data[0], "<i>$query</i>");
+					$code .= CodegenMisc::ArraySimpleDump2($Data[0], "<i>$query</i>");
 
 				case 'add':
 					if (empty($Data)) {
@@ -53,25 +55,25 @@
 											 "type" => "text", 
 											 "id" => "eur_ratio", 
 											 "value" => $Data[0]["eur_ratio"]];
-					$code .= Formatter::Form($FormData, NULL);
+					$code .= CodegenForm::Form($FormData, NULL);
 					break;
 				
 				case 'save':
-					$code .= Formatter::ArraySimpleDump2($_POST, "POST Data");
+					$code .= CodegenMisc::ArraySimpleDump2($_POST, "POST Data");
 					
 					$db = DB::getInstance();
                     $currency = R::dispense('currency');
                     $currency->import($_POST);
                     R::store($currency);
 					
-					$code .= Formatter::Redirect('currency', 3000, "Redirecting to list in 3 seconds.");
+					$code .= CodegenMisc::Redirect('currency', 3000, "Redirecting to list in 3 seconds.");
 					break;
 				
 				case 'delete':
 					$db = DB::getInstance();
 					$currency = R::load('currency', $_GET["id"]);
 					R::trash($currency);
-					$code .= Formatter::Redirect('currency', 3000, "Redirecting to list in 3 seconds.");
+					$code .= CodegenMisc::Redirect('currency', 3000, "Redirecting to list in 3 seconds.");
 				break;
 
 			}

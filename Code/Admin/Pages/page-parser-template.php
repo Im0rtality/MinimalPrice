@@ -1,6 +1,6 @@
 <?php
 	require_once(dirname(__FILE__) . "\..\..\Classes\mysql.php");
-	require_once(dirname(__FILE__) . '\..\..\Classes\formatter.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\table.php');
 	require_once(dirname(__FILE__) . '\..\interface.page-generator.php');
 
 	class PageParserTemplate extends PageModule implements PageGenerator{
@@ -29,7 +29,7 @@
 			$settings['id_col'] = "id";
 			$settings['page'] = "edit{$this->options['link']}";
 			
-			$code .= Formatter::Table($Data, $settings);
+			$code .= CodegenTable::Table($Data, $settings);
 
 			return $code;
 		}

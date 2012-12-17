@@ -1,6 +1,8 @@
 <?php
 	require_once(dirname(__FILE__) . "\..\..\Classes\mysql.php");
-	require_once(dirname(__FILE__) . '\..\..\Classes\formatter.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\form.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\query.php');
+	require_once(dirname(__FILE__) . '\..\..\Classes\Codegen\misc.php');
 	require_once(dirname(__FILE__) . '\..\interface.page-generator.php');
 
 	class PageEditCategory extends PageModule implements PageGenerator{
@@ -15,31 +17,30 @@
 			$code = "";
 			switch ($this->action){
 				case 'save':
-					$code .= Formatter::ArraySimpleDump2($_POST, "POST Data");
-					$query = Formatter::QuerySaveEditor($_POST, "category");
+					$code .= CodegenMisc::ArraySimpleDump2($_POST, "POST Data");
+					$query = CodegenQuery::QuerySaveEditor($_POST, "category");
 
 					
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 
-					$code .= Formatter::Redirect('category', 3000, "Redirecting to list in 3 seconds.");
+					$code .= CodegenMisc::Redirect('category', 3000, "Redirecting to list in 3 seconds.");
 					break;
 				case 'delete':
 					$DB = MySql::getInstance();
-					$DB->ExecuteSQL(Formatter::QueryDeleteEntry('category', $_GET["id"]));
+					$DB->ExecuteSQL(CodegenQuery::QueryDeleteEntry('category', $_GET["id"]));
 
-					$code .= Formatter::Redirect('category', 3000, "Redirecting to list in 3 seconds.");
-
+					$code .= CodegenMisc::Redirect('category', 3000, "Redirecting to list in 3 seconds.");
 					break;
 				case 'edit':
-					$query = Formatter::QueryLoadEditor("category", $_GET["id"]);
+					$query = CodegenQuery::QueryLoadEditor("category", $_GET["id"]);
 
 					
 					$DB = MySql::getInstance();
 					$DB->ExecuteSQL($query);
 					$Data = $DB->GetRecordSet();
 
-					$code .= Formatter::ArraySimpleDump2($Data[0], "<i>$query</i>");
+					$code .= CodegenMisc::ArraySimpleDump2($Data[0], "<i>$query</i>");
 
 				case 'add':
 					if (empty($Data)) {
@@ -62,15 +63,15 @@
 											 "type" => "select", 
 											 "id" => "parent_id", 
 											 "value" => $Data[0]["parent_id"],
-											 "values" => Formatter::GetDataForSelect('category', 'name', true)];
+											 "values" => CodegenQuery::GetDataForSelect('category', 'name', true)];
 
 					$FormData['fields'][] = ["label" => "Image",
 											 "type" => "select", 
 											 "id" => "cimage_id", 
 											 "value" => $Data[0]["cimage_id"],
-											 "values" => Formatter::GetDataForSelect('cimage', 'url')];
+											 "values" => CodegenQuery::GetDataForSelect('cimage', 'url')];
 
-					$code .= Formatter::Form($FormData, NULL);
+					$code .= CodegenForm::Form($FormData, NULL);
 				break;
 
 			}
