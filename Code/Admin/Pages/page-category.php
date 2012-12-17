@@ -8,6 +8,10 @@
 			$this->options['link'] = 'category';
 			$this->options['name'] = 'Categories';
 			parent::__construct();
+        	$this->buttons[] = array(
+        			"name" => "Add", 
+        			"href" => "?page=edit{$this->options['link']}&action=add", 
+        			"icon" => "plus");
 		}
 
 		public function generate() {
@@ -23,10 +27,9 @@
 			$settings['column_widths'] = ["", ""];
 			$settings['column_hidden'] = [true, true, false, true, false];
 			$settings['id_col'] = "id";
-			$settings['page'] = "editcategory";
+			$settings['page'] = "edit{$this->options['link']}";
 			
 			$code .= Formatter::Table($Data, $settings);
-
 			return $code;
 		}
 	}

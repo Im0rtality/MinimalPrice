@@ -42,6 +42,10 @@
 
 					$code .= Formatter::ArraySimpleDump2($Data[0], "<i>$query</i>");
 
+				case 'add':
+					if (empty($Data)) {
+						$Data[0] = array("id" => null, "name" => null, "parent_id" => null, "cimage_id" => null);
+					}
 					$FormData['id'] = $Data[0]["id"];
 					$FormData['page'] = "editcategory";
 					$FormData['fields'][] = ["label" => "ID",
@@ -55,15 +59,18 @@
 											 "id" => "name", 
 											 "value" => $Data[0]["name"]];
 
-					$FormData['fields'][] = ["label" => "Parent ID",
-											 "type" => "text", 
+					$FormData['fields'][] = ["label" => "Parent",
+											 "type" => "select", 
 											 "id" => "parent_id", 
-											 "value" => $Data[0]["parent_id"]];
+											 "value" => $Data[0]["parent_id"],
+											 "values" => Formatter::GetDataForSelect('category', 'name', true)];
 
-					$FormData['fields'][] = ["label" => "Image ID",
-											 "type" => "text", 
+					$FormData['fields'][] = ["label" => "Image",
+											 "type" => "select", 
 											 "id" => "cimage_id", 
-											 "value" => $Data[0]["cimage_id"]];
+											 "value" => $Data[0]["cimage_id"],
+											 "values" => Formatter::GetDataForSelect('cimage', 'url')];
+
 					$code .= Formatter::Form($FormData, NULL);
 				break;
 
