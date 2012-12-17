@@ -11,14 +11,37 @@
 		public function generate() {
 			$code = "";
 
-			$Template['product-list'] = '//table[contains(@class,\"productListing\")][1]//tr';
-			$Template['product-list-skip'] = 1;
-			$Template['product-list-field-count'] = 3;
-			$Template['product-list-item'] = "<template><td>{serial}</td><td></td><td><a href='{href}'></a> </td><td></td><td>{price}</td></template>";
+			$code .= <<<EOT
+<html>
+	<head>
+	</head>
+<body>
+	<form method="GET" action="../ajax/parser.php" class="form-inline">
+		<legend>Skytech.lt parser</legend>
+		<div class="input-append">
+			<input type="text" name="url" id="url" class="input-xxlarge" placeholder="URL of page with product list">
+			<select id="shop" name="shop" class="input-medium">
+			  <option value="1">SKYTECH.LT</option>
+			</select>
+			<button type="submit" class="btn">PARSE</button> 
+		</div>
+		<p class="muted">Sample data: http://www.skytech.lt/procesoriai-stac-komp-procesoriai-c-86_85_182_584.html?pagesize=500</p>
+	</form>
 
-			$json = json_encode($Template);
-
-			debug(htmlentities($json));
+	<form method="GET" action="../ajax/get-tech-spec.php">
+		<legend>cpu-world.com parser</legend>	
+		<div class="input-append">
+			<input type="text" name="sn" id="url" class="input-xlarge" placeholder="Serial Number of CPU">
+			<select id="category" class="input-medium">
+			  <option value="3">CPU</option>
+			</select>
+			<button type="submit" class="btn">PARSE</button> 
+		</div>
+		<p class="muted">Sample data: SDX140HBK13GQ</p>
+</form>
+</body>
+</html>
+EOT;
 
 			return $code;
 		}
