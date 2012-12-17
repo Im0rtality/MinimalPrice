@@ -16,6 +16,10 @@
             $this->options['link'] = 'shop';
             $this->options['name'] = 'Shops';
             parent::__construct();
+            $this->buttons[] = array(
+                    "name" => "Add", 
+                    "href" => "?page=edit{$this->options['link']}&action=add", 
+                    "icon" => "plus");
         }
 
         public function generate() {
@@ -31,7 +35,7 @@
             $settings['column_widths'] = ["", "", "", "", ""];
             $settings['column_hidden'] = [true, true, true, false, false, false, false, false];
             $settings['id_col'] = "id";
-            $settings['page'] = "editshop";
+            $settings['page'] = "edit{$this->options['link']}";
 
             $code = "";
             $code .= Formatter::Table($Data, $settings);
