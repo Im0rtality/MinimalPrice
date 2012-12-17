@@ -32,6 +32,13 @@
 
 					$code .= Formatter::Redirect('category', 3000, "Redirecting to list in 3 seconds.");
 					break;
+				case 'delete':
+					$DB = MySql::getInstance();
+					$DB->ExecuteSQL(Formatter::QueryDeleteEntry('category', $_GET["id"]));
+
+					$code .= Formatter::Redirect('category', 3000, "Redirecting to list in 3 seconds.");
+
+					break;
 				case 'edit':
 					$query = Formatter::QueryLoadEditor("category", $_GET["id"]);
 
