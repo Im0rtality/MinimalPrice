@@ -14,7 +14,7 @@
 
 		protected $contents;
 		
-		public  $DebugMode = true;
+		public  $DebugMode = false;
 		public  $LastError;				
 		private $Buffer;
 		private $DOM;
