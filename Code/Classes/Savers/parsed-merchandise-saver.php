@@ -1,96 +1,61 @@
-﻿<?php
+<?php
     require_once(dirname(__FILE__) . "/../Database/db.php");
-    require_once(dirname(__FILE__) . "/../../Shared/utils.php");
+    require_once(dirname(__FILE__) . "/parsed-merchandise-mapper.php");
 
-    class ParsedMerchandiseMapperException
+    class ParsedMerchandiseSaverException extends ParsedMerchandiseMapperException
     {
-        // exceptions
-        const CANT_MAP_CURRENCY = 101;
-        const CANT_MAP_COST = 102;
         const CURRENCY_UNKNOWN = 103;
         const PRODUCT_UNKNOWN = 104;
-        
+        const SHOP_UNKNOWN = 105;
     }
-    
-    class ParsedMerchandiseMapper
-    {	
+
+    class ParsedMerchandiseSaver
+    {
         private $db;
         private $merchandise;
         private $shop;
         private $currency;
         private $product;
-        
-        
-        
-        private function splitCostCurrency($costCurrency)
-        {
-            if (preg_match("#[0-9]*[.,][0-9]*#", $costCurrency, $matches) > 0) {
-                $cost = $matches[0];
-                if (preg_match("/([A-Z][a-z]*)/", $costCurrency, $costMatches) > 0) {
-                    $currency = substr($costMatches[0], 0, 3); // gets first 3 letters
-                }
-                else {
-                    throw new Exception('Merchandise-mapper: Cannot map parsed currency', ParsedMerchandiseMapperException::CURRENCY_UNKNOWN);
-                }
-            }
-            else {
-                throw new Exception('Merchandise-mapper: Cannot map parsed cost', ParsedMerchandiseMapperException::COST_UNKNOWN);
-            }   
 
-            return array($cost, $currency);
-        }
-        
-        
-        
-        /**
-         * Maps parser keys and data to database tables' fields
-         * @param associative array $parsedData data from parser
-         * return associative array keys - tables' fields, values - parsed data
-         */
-        private function map($parsedData)
-        {
-            list($cost, $currency) = $this->splitCostCurrency($parsedData['price']);
-            
-            // merchandise fields
-            $fields = [
-                "serial" => $parsedData['serial'],
-                "currency" => $currency,
-                "cost" => $cost,
-                "amount" => 1, 
-                //"warranty_mm" => 
-                "url" => $parsedData['href'],
-            ];
-            
-            return $fields;
-        }
-        
+
+
         public function store($shopId, $parsedData)
         {
             $this->db = DB::getInstance();
-            
-            $fields = $this->map($parsedData);
-            
+
+            $fields = ParsedMerchandiseMapper::map($parsedData);
             // search for given product
-            $this->product = R::findOne('product', ' code = ?', array( $fields['serial']));
+            $this->product = R::findOne('product', ' serial = ?', array( $fields['serial']));
             if ( !empty($this->product)) {
                 $this->merchandise = R::dispense('merchandise');
                 $this->shop = R::load('shop', $shopId); // get given shop
-                $this->currency = R::findOne('currency', ' name LIKE ?', array( $fields['currency']));
-                if ( !empty($this->currency)) {
+                if ( !empty($this->shop)) {
+                    $this->currency = R::findOne('currency', " code LIKE ? ", array( $fields['currency']."%"));
+                    if ( !empty($this->currency)) {
+                        
+                        // fields
+                        $this->merchandise->cost = $fields['cost'];
+                        $this->merchandise->amount = $fields['amount'];
+                        //$this->merchandise->warranty_mm = $fields['warranty_mm'];
+                        $this->merchandise->url = $fields['url'];
+                        
+                        // relations
+                        $this->merchandise->shop = $this->shop;
+                        $this->merchandise->currency = $this->currency;
+                        $this->merchandise->product = $this->product;
 
-                    // relations
-                    $this->merchandise->shop = $this->shop;
-                    $this->merchandise->currency = $this->currency;
-                    $this->merchandise->product = $this->product;
-
-                    R::store($this->merchandise);
+                        R::store($this->merchandise);
+                    }
+                    else {
+                        throw new Exception(__CLASS__ . ' Currency not found in Database', ParsedMerchandiseSaverException::CURRENCY_UNKNOWN);
+                    }
                 }
                 else {
-                    throw new Exception('Merchandise-mapper: Currency not found in Database', ParsedMerchandiseMapperException::CURRENCY_UNKNOWN);
+                    throw new Exception(__CLASS__ . ' Given shop not found in Database', ParsedMerchandiseSaverException::SHOP_UNKNOWN);
                 }
-            } 
+            }
             else {
-                throw new Exception('Merchandise-mapper: Product with such serial not exists', ParsedMerchandiseMapperException::PRODUCT_UNKNOWN);
+                throw new Exception(__CLASS__ . ' Product with such serial not exists', ParsedMerchandiseSaverException::PRODUCT_UNKNOWN);
             }
         }
     }
