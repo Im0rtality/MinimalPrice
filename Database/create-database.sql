@@ -123,7 +123,6 @@ CREATE  TABLE IF NOT EXISTS `minimalprice`.`product` (
   `depth_mm` INT NULL ,
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
-  UNIQUE INDEX `model_UNIQUE` (`model` ASC) ,
   UNIQUE INDEX `code_UNIQUE` (`serial` ASC) ,
   INDEX `fk_products_categories1` (`category_id` ASC) ,
   INDEX `fk_product_manufacturer1` (`manufacturer_id` ASC) ,
