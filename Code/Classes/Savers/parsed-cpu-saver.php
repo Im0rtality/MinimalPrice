@@ -63,7 +63,7 @@
                 $this->product->category = $this->category;
             }
             else {
-                throw new Exception(getClass($this) . 'Error: Category doesnt exist in Database', ParsedCPUMapperException::NO_CATEGORY_AT_DB);
+                throw new Exception(getClass($this) . 'Error: Category doesnt exist in Database', ParsedCPUSaverException::NO_CATEGORY_AT_DB);
             }
             
             
