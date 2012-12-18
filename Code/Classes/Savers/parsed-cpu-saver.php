@@ -1,8 +1,12 @@
-﻿<?php
+<?php
     require_once(dirname(__FILE__) . "/../Database/db.php");
-    require_once(dirname(__FILE__) . "/../../Shared/utils.php");
+    require_once(dirname(__FILE__) . "/parsed-cpu-mapper.php");
 
-    class ParsedCPUMapper
+    class ParsedCPUSaverException extends ParsedCPUMapperException {
+        const NO_CATEGORY_AT_DB = 207;
+    }
+    
+    class ParsedCPUSaver
     {	
         private $db;
         private $category;
@@ -15,94 +19,22 @@
         
         
         
-        // ----- methods for spliting parsed data -----
-        private function splitFamily($family)
+        public function store($sn, $parsedData)
         {
-            $pos = strpos($family, ' ');
-            $manufacturer = substr($family, 0, $pos);
-            $series = substr($family, $pos + 1);
+            list($relatedFields, $productFields, $cpuFields) = ParsedCPUMapper::mapParsedData($sn, $parsedData);
             
-            return array($manufacturer, $series);
+            $this->set($relatedFields, $productFields, $cpuFields);
+            
+            R::store($this->productImage);
+            R::store($this->product);
+            R::store($this->cpu);
+            R::storeAll($this->sockets);
+            R::storeAll($this->technologies);
+            echo 'issaugotas cpu su serial = ', $this->product->serial, '<br />';
+            return $this->product->model;
         }
+               
         
-        private function splitCode($partNumbersString)
-        {
-            $pos = strpos($partNumbersString, ' ');
-            $code = substr($partNumbersString, 0, $pos);
-            
-            return $code;
-        }
-        
-        private function splitSockets($parsedData)
-        {
-            $sockets = [];
-            if ( array_key_exists('Sockets', $parsedData)) {
-                $sockets = explode(', ', $parsedData['Sockets']);    
-            }
-            else { // named Socket, not Sockets
-                $sockets = explode(', ', $parsedData['Socket']);    
-            }
-            return $sockets;
-        }
-        // -----/methods for spliting parsed data -----
-        
-        
-        
-        /**
-         * Maps parser keys and data to database tables' fields
-         * @param associative array $parsedData data from parser
-         * return associative array keys - tables' fields, values - parsed data
-         */
-        private function map($parsedData)
-        {
-            list($manufacturer, $series) = $this->splitFamily( $parsedData['Family']);
-            $code = $this->splitCode( $parsedData['CPU part numbers']);
-            
-            $sockets = $this->splitSockets($parsedData);
-            $technologies = explode(', ', $parsedData['Features']);
-            
-            // misc related tables' fields
-            $relatedFields = [
-                "category" => "Procesoriai",
-                "manufacturer" => $manufacturer,
-                
-                // product images
-                "imageUrl" => 'dummyImageURL' . rand() . '.jpg', // create random image address
-                
-                "sockets" => $sockets,
-                "technologies" => $technologies,
-            ];
-            
-            // TRICKY ----------------- folowing fields' keys MUST be the same as table fields ----------------------------------- 
-            // product table fields
-            $productFields = [
-                "series" => $series,
-                "model" => $parsedData['Model number'],
-                "code" => $code,
-                "description" => "dummy decription",
-            ];
-            
-            // cpu table fields
-            $cpuFields = [
-                "cores" => $parsedData['The number of cores'],
-                "frequency_mhz" => $parsedData['Frequency'],
-                "instruction_set_bits" => $parsedData['Data width'],
-                        // FUTURE add support (needs parsing 4 x 30 kb instruction + 4 x 2 MB data) 
-                //"cacheL1Kb" => $parsedData['Level 1 cache size'],
-                //"cacheL2Kb" => $parsedData['Level 2 cache size'],
-                //"cacheL3Kb" => $parsedData['Level 3 cache size'],
-                "threads" => $parsedData['The number of threads'],
-                "launch_date" => $parsedData['Introduction date'], // FIXME convert to data - time
-                "bus_core_ratio" => $parsedData['Clock multiplier'],
-                //"busSpeedMhz" => $parsedData['Bus speed'], // FUTURE needs parsing
-                "max_tdp" => $parsedData['Thermal Design Power'],
-                //"maxCpusConfiguration" => $parsedData['Multiprocessing'], // FUTURE needs parsing to number
-                //"technologyNm" => $parsedData['Manufacturing process'], // FUTURE needs parsing to number
-                "is_fan_included" => 0, // FUTURE add box (with fan) processors support   
-            ];
-            
-            return array($relatedFields, $productFields, $cpuFields);
-        }
         
         /**
          * Prepares data for storage. Creates or find needed beans, adds field data
@@ -111,35 +43,56 @@
         private function set($relatedFields, $productFields, $cpuFields)
         {    
             $this->db = DB::getInstance();
-            
-            // add existing category
-            $this->category = R::findOne('category', ' name = ?', array( $relatedFields['category']));
-            
-            // add existing manufacturer
-            $this->manufacturer = R::findOne('manufacturer', ' name = ?', array( $relatedFields['manufacturer']));
-            if ( empty($this->manufacturer)) {
-                $this->manufacturer = R::dispense('manufacturer'); // create new
-                $this->manufacturer->name = $relatedFields['manufacturer'];
+           
+            $this->product = R::findOne('product', ' serial = ?', array ( $productFields['serial'])); 
+            if ( !empty($this->product)) {
+                $this->deleteProductInfo();
+            } else {
+                $this->product = R::dispense('product');
             }
             
-            // add existing image
-            $this->productImage = R::findOne('pimage', ' url = ?', array( $relatedFields['imageUrl']));
-            if ( empty($this->productImage)) {
-                $this->productImage = R::dispense('pimage'); // create new image
-                $this->productImage->url = $relatedFields['imageUrl']; // create random image address
-            }
-
-            // create product data
-            $this->product = R::dispense('product'); // create new
+            
+            
             foreach($productFields as $key => $value) {
                 $this->product->$key = $value;
             }
             
-            // create cpu table fields
-            $this->cpu = R::dispense('cpu'); // create new
+            // add existing category
+            $this->category = R::findOne('category', ' name = ?', array( $relatedFields['category']));
+            if ( !empty($this->category)) {
+                $this->product->category = $this->category;
+            }
+            else {
+                throw new Exception(getClass($this) . 'Error: Category doesnt exist in Database', ParsedCPUMapperException::NO_CATEGORY_AT_DB);
+            }
+            
+            
+            
+            // add existing or creating new manufacturer
+            $manufacturers = R::findOrDispense('manufacturer', ' name = ?', array( $relatedFields['manufacturer']));
+            $this->manufacturer = reset($manufacturers);
+            $this->manufacturer->name = $relatedFields['manufacturer'];
+            $this->product->manufacturer = $this->manufacturer; // creates many to one relation
+            
+            
+            
+            
+            // add existing or creating new image
+            $productImages[] = R::findOrDispense('pimage', ' url = ?', array( $relatedFields['imageUrl']));
+            $this->productImage = reset($productImages[0]);
+            $this->productImage->url = $relatedFields['imageUrl']; 
+            $this->product->sharedPimage[] = $this->productImage; // many to many relation, adding a bean
+            
+            
+            
+            // create new cpu
+            $this->cpu = R::dispense('cpu');
             foreach($cpuFields as $key => $value) {
                 $this->cpu->$key = $value;
             }
+            $this->cpu->product = $this->product;
+            
+            
             
             // add sockets
             for ($i = 0; $i < count( $relatedFields['sockets']); $i++) {
@@ -149,6 +102,9 @@
                     $this->sockets[$i]->name = $relatedFields['sockets'][$i];
                 }
             }
+            $this->cpu->sharedSocket = $this->sockets;
+            
+            
             
             // add technologies
             for ($i = 0; $i < count( $relatedFields['technologies']); $i++) {
@@ -158,27 +114,37 @@
                     $this->technologies[$i]->name = $relatedFields['technologies'][$i];
                 }
             }
-        }
-
-        public function store($parsedData)
-        {
-            list($relatedFields, $productFields, $cpuFields) = $this->map($parsedData);
-            $this->set($relatedFields, $productFields, $cpuFields);
-            
-            // relations
-            $this->product->manufacturer = $this->manufacturer; // creates many to one relation, adds a bean
-            $this->product->category = $this->category;
-            $this->product->sharedPimage[] = $this->productImage; // many to many relation, adding a bean
-            
-            $this->cpu->product = $this->product;
-            $this->cpu->sharedSocket = $this->sockets;
             $this->cpu->sharedTechnology = $this->technologies;
+        }
+        
+        private function deleteProductInfo() 
+        {
+            // leave only serial
+            $this->product->series = '';
+            $this->product->model = '';
+            $this->product->description = '';
+            $this->product->weight_kg = null;
+            $this->product->width_mm = null;
+            $this->product->height_mm = null;
+            $this->product->depth_mm = null;
+                    
+            $pimage_products = R::find('pimage_product', ' product_id = ?', array($this->product->id));
+            R::trashAll($pimage_products);
             
-            R::store($this->productImage);
-            R::store($this->product);
-            R::store($this->cpu);
-            R::storeAll($this->sockets);
-            R::storeAll($this->technologies);
+            $accesory_product = R::find('pimage_product', ' product_id = ?', array($this->product->id));
+            R::trashAll($accesory_product);
+            
+            // delete related cpu, cpu_socket, cpu_technologies
+            $this->cpu = R::findOne('cpu', ' product_id = ?', array ($this->product->id));
+            if ( !empty($this->cpu)) {
+
+                $sockets = R::find('cpu_socket', ' cpu_id = ?', array ($this->cpu->id));
+                $technologies = R::find('cpu_technology', ' cpu_id = ?', array ($this->cpu->id));
+
+                R::trashAll($sockets);
+                R::trashAll($technologies);                    
+                R::trash($this->cpu);
+            }
         }
     }
 ?>
