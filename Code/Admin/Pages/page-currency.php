@@ -15,10 +15,14 @@
 		}
 
 		public function generate() {
-			$db = DB::getInstance();
-			$currencies = R::findAll('currency');
-			$data = R::exportAll($currencies);
-			
+			$query = "SELECT * FROM `currency`";
+
+			$code = "";
+
+			$DB = MySql::getInstance();
+			$DB->ExecuteSQL($query);
+			$Data = $DB->GetRecordSet();
+
 			$settings['column_names'] = ["Code", "EUR Ratio"];
 			$settings['column_widths'] = ["", ""];
 			$settings['column_hidden'] = [true, false, false];
@@ -26,7 +30,7 @@
 			$settings['page'] = "edit{$this->options['link']}";
 			
 			$code = "";
-			$code .= CodegenTable::Table($data, $settings);
+			$code .= CodegenTable::Table($Data, $settings);
 
 			return $code;
 		}
