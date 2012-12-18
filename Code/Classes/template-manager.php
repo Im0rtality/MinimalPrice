@@ -24,7 +24,7 @@
 				$this->Template['product-list-field-count'] = 3;
 				$this->Template['product-list-item'] = "<template><td>{serial}</td><td></td><td><a href='{href}'></a> </td><td></td><td>{price}</td></template>";
 			*/
-			debug($this->Template);
+		//	debug($this->Template);
 		}
 		
 		function GetItem($Piece) {
