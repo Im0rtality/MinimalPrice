@@ -21,8 +21,9 @@
         
         public function store($sn, $parsedData)
         {
+            echo 'Paresd-cpu-saver.php given $sn = ', $sn, ' parsedData[CPU part numbers] = ', $parsedData['CPU part numbers'], '<br />'; 
             list($relatedFields, $productFields, $cpuFields) = ParsedCPUMapper::mapParsedData($sn, $parsedData);
-            
+            echo 'Parsed-cpu-saver.php returned $sn = ', $productFields['serial'], '<br />';
             $this->set($relatedFields, $productFields, $cpuFields);
             
             R::store($this->productImage);
@@ -63,7 +64,7 @@
                 $this->product->category = $this->category;
             }
             else {
-                throw new Exception(getClass($this) . 'Error: Category doesnt exist in Database', ParsedCPUSaverException::NO_CATEGORY_AT_DB);
+                throw new Exception(__CLASS__ . 'Error: Category doesnt exist in Database', ParsedCPUSaverException::NO_CATEGORY_AT_DB);
             }
             
             
