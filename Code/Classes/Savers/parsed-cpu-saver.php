@@ -21,9 +21,7 @@
         
         public function store($sn, $parsedData)
         {
-            echo 'Paresd-cpu-saver.php given $sn = ', $sn, ' parsedData[CPU part numbers] = ', $parsedData['CPU part numbers'], '<br />'; 
             list($relatedFields, $productFields, $cpuFields) = ParsedCPUMapper::mapParsedData($sn, $parsedData);
-            echo 'Parsed-cpu-saver.php returned $sn = ', $productFields['serial'], '<br />';
             $this->set($relatedFields, $productFields, $cpuFields);
             
             R::store($this->productImage);

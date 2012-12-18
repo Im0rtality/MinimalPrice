@@ -38,8 +38,8 @@
             else {
                 throw new Exception(__CLASS__ . 'Error: No manufacturer', ParsedCPUMapperException::NO_MANUFACTURER_PARSED);
             }
-            if ( array_key_exists('CPU part numbers', $parsedData)) {
-                $serial = self::splitSerial( $sn, $parsedData['CPU part numbers']);
+            if ( array_key_exists('CPU part numbers', $parsedData) || array_key_exists('CPU part number', $parsedData)) {
+                $serial = self::splitSerial( $sn, $parsedData);
                 $productFields['serial'] = $serial;
             }
             else {
@@ -125,10 +125,17 @@
             return array($manufacturer, $series);
         }
         
-        private static function splitSerial($sn, $partNumbersString)
+        private static function splitSerial($sn, $parsedData)
         {
+            $partNumbersString = '';
+            if ( array_key_exists('CPU part numbers', $parsedData)) {
+                $partNumbersString = $parsedData['CPU part numbers'];
+            }
+            if ( array_key_exists('CPU part number', $parsedData)) {
+                $partNumbersString = $parsedData['CPU part number'];
+            }
             $serial = '';
-            if (strpos($partNumbersString, $sn) > 0) { // if serial is in partNumbersString
+            if (strpos($partNumbersString, $sn) !== false) { // if serial is in partNumbersString
                 $serial = $sn;
             }
             return $serial;
