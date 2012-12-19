@@ -5,6 +5,7 @@
 		function __construct(){
 			$this->options['link'] = 'test';
 			$this->options['name'] = 'Test Ground';
+            $this->options['inSidebar'] = false;
 			parent::__construct();
 		}
 
